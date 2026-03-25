@@ -20,12 +20,12 @@ h1{
     padding: 0;
 }
 h2{
-    width: 30%;
+    width: 25%;
     color: var(--p2-color);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 20px;
+    font-size: 14px;
     font-weight: 400;
     text-align: center;
     margin-bottom: 15px;

@@ -1,3 +1,5 @@
+//import { createFile, readFile, saveFile } from "./libregister"
+
 let container = document.querySelector(".content")
 let tagIndexed = document.querySelector(".indexed-tags")
 
