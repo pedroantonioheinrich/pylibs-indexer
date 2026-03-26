@@ -1,7 +1,9 @@
 //import { createFile, readFile, saveFile } from "./libregister"
 
-let container = document.querySelector(".content")
-let tagIndexed = document.querySelector(".indexed-tags")
+const container = document.querySelector(".content")
+const tagIndexed = document.querySelector(".indexed-tags")
+const span = document.querySelector(".how-many-libs span")
+
 
 let tagsArr = []
 
@@ -60,7 +62,7 @@ let data = [{
 },
 {
     icon: "🔢",
-    id: "1",
+    id: "5",
     name: "NumPy",
     category: "Data Science",
     description: "NumPy (Numerical Python) é a biblioteca fundamental para computação científica em Python. Fornece objetos array multidimensionais eficientes (ndarray), funções matemáticas de alto desempenho, ferramentas para álgebra linear, transformadas de Fourier e geração de números aleatórios. É a base para bibliotecas como Pandas, SciPy, Scikit-learn e TensorFlow.",
@@ -136,7 +138,7 @@ let data = [{
     ]
 },{
     icon: "🔐",
-    id: "2",
+    id: "6",
     name: "RSA (Criptografia)",
     category: "Segurança",
     description: "RSA (Rivest-Shamir-Adleman) é um algoritmo de criptografia assimétrica amplamente utilizado para transmissão segura de dados. Utiliza um par de chaves: uma pública para cifrar mensagens e uma privada para decifrá-las. A segurança do RSA baseia-se na dificuldade de fatorar números grandes compostos pelo produto de dois números primos. Em Python, pode ser implementado com bibliotecas como pycryptodome, cryptography ou implementado manualmente para fins educacionais.",
@@ -195,19 +197,26 @@ let data = [{
 
 
 for(let i = 0; i < data.length; i++){
-    newDiv = `<div class="card-container">
-                <div class="card-img">${data[i]['icon']}</div>
-                <div class="card-description">
-                    <p>${data[i]['description'].slice(0,80)}...</p>
-                </div>
-                <div class="card-tag-category">${data[i]['category']}</div>
-             </div>`
-    newTag = `<a class="tags" href=""  rel="nofollow">${data[i]['category']}</a>`
-    if (tagsArr.includes(data[i]['category']) === false){
+    const newCard = document.createElement('div')
+    newCard.classList.add("card-container")
+    newCard.innerHTML = `
+            <div class="card-img">${data[i]['icon']}</div>
+            <div class="card-description">
+                <p>${data[i]['description'].slice(0,80)}...</p>
+            </div>
+            <div class="card-tag-category">${data[i]['category']}</div>`
+
+    newCard.addEventListener('click', ()=>{
+        console.log(data[i]['id'])
+    })
+
+    if (!tagsArr.includes(data[i]['category'])){
         tagsArr.push(data[i]['category'])
+        const newTag = `<a class="tags" href=""  rel="nofollow">${data[i]['category']}</a>`
         tagIndexed.innerHTML += newTag
     }
-    container.innerHTML += newDiv
-    
+    container.appendChild(newCard)
 }
+
+span.textContent = data.length
 

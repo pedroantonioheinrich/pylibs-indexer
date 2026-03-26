@@ -78,6 +78,21 @@
     color: var(--bg-color);
 }
 
+.how-many-libs{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 62%;
+    height: 30px;
+    padding-left: 5px;
+}
+.how-many-libs span{
+    color: var(--h1-color);
+}
+.how-many-libs p{
+    color: var(--p2-color);
+}
+
     
 
 .content{
