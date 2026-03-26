@@ -1,5 +1,3 @@
-//import { createFile, readFile, saveFile } from "./libregister"
-
 const container = document.querySelector(".content")
 const tagIndexed = document.querySelector(".indexed-tags")
 const span = document.querySelector(".how-many-libs span")
@@ -193,30 +191,37 @@ let data = [{
 ]
 
 
-
-
-
-for(let i = 0; i < data.length; i++){
+data.forEach((lib)=>{
     const newCard = document.createElement('div')
     newCard.classList.add("card-container")
     newCard.innerHTML = `
-            <div class="card-img">${data[i]['icon']}</div>
+            <div class="card-img">${lib.icon}</div>
             <div class="card-description">
-                <p>${data[i]['description'].slice(0,80)}...</p>
+                <p>${lib.description.slice(0,80)}...</p>
             </div>
-            <div class="card-tag-category">${data[i]['category']}</div>`
-
+            <div class="card-tag-category">${lib.category}</div>
+            `
+    
     newCard.addEventListener('click', ()=>{
-        console.log(data[i]['id'])
+        window.location.href = `details.html?id=${lib.id}`
     })
-
-    if (!tagsArr.includes(data[i]['category'])){
-        tagsArr.push(data[i]['category'])
-        const newTag = `<a class="tags" href=""  rel="nofollow">${data[i]['category']}</a>`
-        tagIndexed.innerHTML += newTag
+    
+    if (!tagsArr.includes(lib.category)){
+        tagsArr.push(lib.category)
+        const newTag = document.createElement('div')
+        newTag.classList.add("tags")
+        newTag.textContent = `${lib.category}`
+        newTag.addEventListener('click', ()=>{
+            window.location.href = `details.html?id=${lib.id}`
+        })
+        tagIndexed.appendChild(newTag)
     }
     container.appendChild(newCard)
-}
+
+})
+
 
 span.textContent = data.length
+
+
 

@@ -1,4 +1,4 @@
-const fs = require('fs')
+import fs from 'fs'
 
 
 export function createFile(nameFile, fileExtension, content){
@@ -19,3 +19,4 @@ export function readFile(filePath){
 // createFile('joguinho', 'txt', 'oioioio')
 
 // readFile('joguinho.txt')
+
