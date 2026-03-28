@@ -1,0 +1,30 @@
+"Aja como um especialista em documentação Python. Preciso que você gere um objeto JSON para a biblioteca [NOME DA BIBLIOTECA] seguindo rigorosamente o esquema abaixo.
+
+Regras de preenchimento:
+
+icon: Um emoji que represente a lib.
+
+id: Use o número [PRÓXIMO NÚMERO DA SUA LISTA].
+
+description: Um parágrafo de até 3 linhas explicando o que é e para que serve.
+
+commands: Crie pelo menos 3 exemplos reais, indo do básico ao intermediário.
+
+cmdCode: Use \n para quebras de linha dentro da string do código.
+
+Saída: Forneça APENAS o código JSON puro, sem explicações antes ou depois.
+
+Modelo de estrutura:
+{
+"icon": "",
+"id": "",
+"name": "",
+"category": "" [em Portugues do Brasil APENAS 1 CATEGORIA],
+"description": "",
+"oficialDocLink: "",
+"installCmd": "",
+"importCmd": "",
+"commands": [
+{ "cmdName": "", "cmdDescription": "", "cmdCode": "", "cmdOutput": "" }
+]
+}"
