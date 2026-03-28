@@ -40,3 +40,5 @@ O projeto preza pela simplicidade e performance, utilizando tecnologias web pura
 └── Scripts/
     ├── script.js       # Lógica da Home
     └── details.js      # Lógica de renderização de comandos
+
+
