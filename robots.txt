@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pylibs.com.br/sitemap.xml
