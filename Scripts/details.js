@@ -1,5 +1,26 @@
 let currentLib = null;
 
+function setCanonicalURL() {
+    const params = new URLSearchParams(window.location.search);
+    const libId = params.get('id');
+    const canonicalBase = "https://www.pylibs.com.br/details.html";
+    
+    const link = document.createElement('link');
+    link.setAttribute('rel', 'canonical');
+    
+    const finalURL = libId ? `${canonicalBase}?id=${libId}` : canonicalBase;
+    link.setAttribute('href', finalURL);
+    
+    const existingCanonical = document.querySelector('link[rel="canonical"]');
+    if (existingCanonical) {
+        existingCanonical.remove();
+    }
+    
+    document.head.appendChild(link);
+}
+
+setCanonicalURL();
+
 
 async function init() {
     const urlParams = new URLSearchParams(window.location.search)
