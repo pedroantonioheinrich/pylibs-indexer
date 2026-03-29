@@ -65,6 +65,7 @@
         bottom: 0px;
         margin-top: 40px;
         padding: 20px;
+        transition: margin-top 0.5s ease;
     }
     footer p{
         display: flex;
@@ -72,6 +73,7 @@
         align-items: center;
         color: var(--p2-color);
         font-size: 13px;
+        
         
     }
 
@@ -315,15 +317,15 @@
 
     /* --- GRID DE CONTEÚDO --- */
     .content {
-        width: 90%;
+        width: 95%;
         min-height: fit-content;
         margin: 0 auto;
-        display: flex;
+        display: flex;  
         flex-wrap: wrap;
         justify-content: center;
-        gap: 20px;
         padding: 50px 0;
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        overflow: hidden;
 
     }
 
@@ -331,7 +333,7 @@
         background-color: var(--elements-color);
         height: 220px;
         width: 360px;
-        margin: 5px;
+        margin: 15px;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -346,6 +348,7 @@
         position: relative;   
         z-index: 1;
         backface-visibility: hidden;  
+        overflow: hidden;
     }
 
     .card-container:hover {
@@ -353,9 +356,10 @@
         box-shadow: 0 0 18px rgba(250, 200, 20, 0.2);
         min-height:fit-content;
         width: 360px;
-        margin: 0;
-        transform: scale(1.01); /* modificado */
-        z-index: 20; /* modificado */
+        margin: 15px;
+        transform: scale(1.04);
+        z-index: 20;
+        backface-visibility: hidden;  
     }
 
     .card-img { font-size: 35px; margin-bottom: 10px; }
@@ -382,6 +386,7 @@
         -webkit-box-orient: vertical;
         text-align:start;
         text-justify:auto;
+        transition: all 0.5s ease;
     }
    
     .card-container:hover .card-description p {
