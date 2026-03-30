@@ -5511,10 +5511,111 @@
   "oficialDocLink": "https://loguru.readthedocs.io/",
   "installCmd": "pip install loguru",
   "importCmd": "from loguru import logger",
-  "commands": [
-   
+  "commands": 
+[
+  {
+    "cmdName": "logger.add()",
+    "cmdDescription": "Adiciona um sink (saída) para os logs, podendo ser arquivo, função, socket, etc. Configura rotação, retenção, compressão, formatação e níveis de filtro.",
+    "cmdCode": "# Exemplo 1: Sink básico para arquivo\nfrom loguru import logger\nlogger.add(\"file.log\")\nlogger.info(\"Mensagem no arquivo\")\n\n# Exemplo 2: Configuração com rotação e retenção\nlogger.add(\"app_{time}.log\", rotation=\"500 MB\", retention=\"10 days\")\n\n# Exemplo 3: Compressão e formato personalizado\nlogger.add(\"output.log\", compression=\"zip\", format=\"{time} | {level} | {message}\")\n\n# Exemplo 4: Sink para função customizada\ndef my_sink(message):\n    with open(\"custom.log\", \"a\") as f:\n        f.write(str(message) + \"\\n\")\nlogger.add(my_sink)\n\n# Exemplo 5: Filtragem por nível e módulo\nlogger.add(\"errors.log\", level=\"ERROR\", filter=lambda record: \"auth\" in record[\"name\"])\n\n# Exemplo 6: Sink para socket\nlogger.add(\"tcp://localhost:514\", format=\"{message}\", level=\"INFO\")",
+    "cmdOutput": "$ python script.py\n\n2024-05-20 10:30:45.123 | INFO     | __main__:<module>:1 - Mensagem no arquivo\n\n# Saída para app_2024-05-20_10-30-45.log (rotação e retenção aplicadas)\n# Saída para output.zip contendo output.log comprimido\n# Saída para custom.log com o conteúdo do log\n# errors.log contém apenas logs de nível ERROR ou superior do módulo 'auth'\n# Conexão estabelecida com socket tcp://localhost:514"
+  },
+  {
+    "cmdName": "logger.remove()",
+    "cmdDescription": "Remove um sink previamente adicionado usando seu ID (retornado por logger.add).",
+    "cmdCode": "# Exemplo 1: Remover sink por ID\nsink_id = logger.add(\"temp.log\")\nlogger.info(\"Esta mensagem será salva\")\nlogger.remove(sink_id)\nlogger.info(\"Esta mensagem não será salva no arquivo\")\n\n# Exemplo 2: Remover todos os sinks\nlogger.add(\"file1.log\")\nlogger.add(\"file2.log\")\nlogger.remove()  # Remove todos os sinks (exceto o default stderr)\nlogger.info(\"Apenas no console\")",
+    "cmdOutput": "$ python script.py\n\n2024-05-20 10:30:45.123 | INFO     | __main__:<module>:1 - Esta mensagem será salva\n2024-05-20 10:30:45.124 | INFO     | __main__:<module>:2 - Esta mensagem não será salva no arquivo\n2024-05-20 10:30:45.124 | INFO     | __main__:<module>:3 - Apenas no console\n\n# file1.log e file2.log contêm apenas a primeira mensagem"
+  },
+  {
+    "cmdName": "logger.catch()",
+    "cmdDescription": "Decorador ou context manager que captura e registra exceções, prevenindo quebras na aplicação e fornecendo contexto detalhado.",
+    "cmdCode": "# Exemplo 1: Decorador para função\nfrom loguru import logger\n\n@logger.catch\ndef divide(x, y):\n    return x / y\n\nresult = divide(10, 0)\n\n# Exemplo 2: Context manager com reraise controlado\nwith logger.catch(reraise=True):\n    1 / 0\n\n# Exemplo 3: Decorador com configuração personalizada\n@logger.catch(message=\"Erro capturado em {function}\", level=\"CRITICAL\")\ndef risky_operation():\n    raise ValueError(\"Algo deu errado\")\n\nrisky_operation()",
+    "cmdOutput": "$ python script.py\n\n2024-05-20 10:30:45.123 | ERROR    | __main__:<module>:1 - An error has been caught in function 'divide', process 'MainProcess' (12345), thread 'MainThread' (12345):\nTraceback (most recent call last):\n  File \"<stdin>\", line 2, in divide\nZeroDivisionError: division by zero\n\n2024-05-20 10:30:45.124 | ERROR    | __main__:<module>:2 - An error has been caught in function '<module>', process 'MainProcess' (12345), thread 'MainThread' (12345):\nTraceback (most recent call last):\n  File \"<stdin>\", line 2, in <module>\nZeroDivisionError: division by zero\n\n2024-05-20 10:30:45.125 | CRITICAL | __main__:<module>:3 - Erro capturado em risky_operation\nTraceback (most recent call last):\n  File \"<stdin>\", line 2, in risky_operation\nValueError: Algo deu errado"
+  },
+  {
+    "cmdName": "logger.configure()",
+    "cmdDescription": "Configuração global do logger, incluindo handlers padrão, níveis personalizados, formatação e serialização.",
+    "cmdCode": "# Exemplo 1: Configuração básica com formatação personalizada\nlogger.configure(\n    handlers=[\n        {\"sink\": sys.stderr, \"format\": \"{time} | {level} | {message}\"},\n        {\"sink\": \"file.log\", \"serialize\": True}\n    ]\n)\nlogger.info(\"Configurado\")\n\n# Exemplo 2: Adicionar nível personalizado\nlogger.level(\"CUSTOM\", no=25, color=\"<yellow>\")\nlogger.configure(levels=[{\"name\": \"CUSTOM\", \"no\": 25, \"color\": \"<yellow>\"}])\nlogger.log(\"CUSTOM\", \"Mensagem customizada\")\n\n# Exemplo 3: Configuração avançada com extra\nextra_data = {\"app\": \"meu_app\", \"version\": \"1.0\"}\nlogger.configure(extra=extra_data)\nlogger.bind(app=\"meu_app\").info(\"Mensagem com extra\")\n\n# Exemplo 4: Configurar atraso na criação de arquivos\nlogger.configure(activation=[(\"meu_modulo\", False)])  # Desativa logs do módulo\nlogger.info(\"Esta mensagem não aparece\")",
+    "cmdOutput": "$ python script.py\n\n2024-05-20 10:30:45.123 | INFO | Configurado\n\n# Saída em file.log: {\"text\": \"2024-05-20 10:30:45.123 | INFO | Configurado\", \"record\": {...}}\n\n2024-05-20 10:30:45.124 | CUSTOM | __main__:<module>:2 - Mensagem customizada\n2024-05-20 10:30:45.125 | INFO | __main__:<module>:3 - Mensagem com extra\n# A última mensagem não aparece devido à desativação"
+  },
+  {
+    "cmdName": "logger.bind()",
+    "cmdDescription": "Cria um logger temporário com atributos adicionais que são incluídos em todos os logs subsequentes desse logger.",
+    "cmdCode": "# Exemplo 1: Bind para adicionar contexto\nuser_logger = logger.bind(user=\"admin\")\nuser_logger.info(\"Login realizado\")\n\n# Exemplo 2: Bind com múltiplos valores\nlogger.bind(request_id=123, session=\"abc\").info(\"Requisição processada\")\n\n# Exemplo 3: Bind aninhado\nlogger_ctx = logger.bind(user=\"admin\")\nlogger_ctx = logger_ctx.bind(operation=\"delete\")\nlogger_ctx.info(\"Ação executada\")\n\n# Exemplo 4: Bind com extra via configure\nlogger.configure(extra={\"app\": \"myapp\"})\nlogger.bind(user=\"admin\").info(\"Mensagem com contexto\")\n\n# Exemplo 5: Bind e destaque na formatação\nlogger.add(sys.stderr, format=\"{time} | {extra[user]} | {message}\")\nlogger.bind(user=\"admin\").info(\"Ação do admin\")",
+    "cmdOutput": "$ python script.py\n\n2024-05-20 10:30:45.123 | INFO     | __main__:<module>:1 - Login realizado [user=admin]\n2024-05-20 10:30:45.124 | INFO     | __main__:<module>:2 - Requisição processada [request_id=123, session=abc]\n2024-05-20 10:30:45.125 | INFO     | __main__:<module>:3 - Ação executada [user=admin, operation=delete]\n2024-05-20 10:30:45.126 | INFO     | __main__:<module>:4 - Mensagem com contexto [app=myapp, user=admin]\n2024-05-20 10:30:45.127 | admin | Ação do admin"
+  },
+  {
+    "cmdName": "logger.patch()",
+    "cmdDescription": "Adiciona ou modifica atributos do record de log de forma dinâmica no momento da chamada.",
+    "cmdCode": "# Exemplo 1: Adicionar atributo dinâmico\nlogger.patch(lambda record: record.update(pid=12345)).info(\"Processo iniciado\")\n\n# Exemplo 2: Modificar mensagem\nlogger.patch(lambda record: record[\"message\"].upper()).info(\"mensagem em caixa alta\")\n\n# Exemplo 3: Adicionar dados baseados no contexto\ndef add_context(record):\n    record[\"extra\"][\"user\"] = get_current_user()\n\nlogger.patch(add_context).info(\"Ação realizada\")\n\n# Exemplo 4: Patch combinado com bind\nlogger.bind(user=\"admin\").patch(lambda r: r.update(thread=\"main\")).info(\"Com bind e patch\")",
+    "cmdOutput": "$ python script.py\n\n2024-05-20 10:30:45.123 | INFO     | __main__:<module>:1 - Processo iniciado [pid=12345]\n2024-05-20 10:30:45.124 | INFO     | __main__:<module>:2 - MENSAGEM EM CAIXA ALTA\n2024-05-20 10:30:45.125 | INFO     | __main__:<module>:3 - Ação realizada [user=guest]\n2024-05-20 10:30:45.126 | INFO     | __main__:<module>:4 - Com bind e patch [user=admin, thread=main]"
+  },
+  {
+    "cmdName": "logger.level()",
+    "cmdDescription": "Cria ou modifica níveis de log personalizados, definindo nome, valor numérico, cor e ícone.",
+    "cmdCode": "# Exemplo 1: Criar nível personalizado\nlogger.level(\"AUDIT\", no=15, color=\"<cyan>\", icon=\"🔍\")\nlogger.log(\"AUDIT\", \"Ação auditada\")\n\n# Exemplo 2: Modificar nível existente\nlogger.level(\"WARNING\", color=\"<yellow><bold>\", icon=\"⚠️\")\nlogger.warning(\"Aviso modificado\")\n\n# Exemplo 3: Níveis com nomes customizados e hierarquia\nlogger.level(\"FATAL\", no=50, color=\"<red><bold>\", icon=\"💀\")\nlogger.log(\"FATAL\", \"Erro fatal do sistema\")\n\n# Exemplo 4: Usar nível em sink\nlogger.add(\"audit.log\", level=\"AUDIT\")\nlogger.log(\"AUDIT\", \"Log de auditoria salvo\")",
+    "cmdOutput": "$ python script.py\n\n2024-05-20 10:30:45.123 | AUDIT    | __main__:<module>:1 - Ação auditada\n2024-05-20 10:30:45.124 | WARNING  | __main__:<module>:2 - Aviso modificado\n2024-05-20 10:30:45.125 | FATAL    | __main__:<module>:3 - Erro fatal do sistema\n\n# audit.log contém: 2024-05-20 10:30:45.126 | AUDIT | __main__:<module>:4 - Log de auditoria salvo"
+  },
+  {
+    "cmdName": "logger.enable() / logger.disable()",
+    "cmdDescription": "Habilita ou desabilita logs para módulos específicos, permitindo controle granular do que é registrado.",
+    "cmdCode": "# Exemplo 1: Desabilitar logs de um módulo\nlogger.disable(\"myapp.auth\")\nfrom myapp.auth import login\nlogin()  # Logs do módulo auth não aparecem\n\n# Exemplo 2: Habilitar novamente\nlogger.enable(\"myapp.auth\")\nlogin()  # Logs aparecem\n\n# Exemplo 3: Desabilitar todos os logs de um pacote\nlogger.disable(\"myapp\")\n\n# Exemplo 4: Múltiplos módulos\nlogger.disable(\"module1\")\nlogger.disable(\"module2\")\nlogger.enable(\"module1\")  # Reativa apenas module1\n\n# Exemplo 5: Verificar estado\ndef is_module_enabled(module):\n    return not logger._core.handlers[0]._enabled.get(module, True)\nprint(is_module_enabled(\"myapp.auth\"))",
+    "cmdOutput": "$ python script.py\n\n# Primeiro login: sem logs do módulo auth\n2024-05-20 10:30:45.123 | INFO     | myapp.database:connect:15 - Conectado\n\n# Segundo login: com logs do módulo auth\n2024-05-20 10:30:45.124 | INFO     | myapp.auth:login:20 - Autenticando usuário\n2024-05-20 10:30:45.125 | INFO     | myapp.auth:login:25 - Login bem-sucedido\n\n# Saída do print: False (desabilitado após logger.disable)"
+  },
+  {
+    "cmdName": "logger.opt()",
+    "cmdDescription": "Fornece opções de configuração para uma única chamada de log, como lazy evaluation, captura de exceção, ansi, raw, etc.",
+    "cmdCode": "# Exemplo 1: Lazy evaluation (avaliação tardia)\nlogger.opt(lazy=True).debug(\"Mensagem cara de computar: {}\", expensive_function())\n\n# Exemplo 2: Capturar exceção e incluir stack trace\nlogger.opt(exception=True).error(\"Erro processando dados\")\n\n# Exemplo 3: Desabilitar cores (ANSI)\nlogger.opt(colors=False).info(\"Mensagem sem <green>cores</green>\")\n\n# Exemplo 4: Log raw (sem formatação adicional)\nlogger.opt(raw=True).info(\"Mensagem sem timestamp, nível ou extra\")\n\n# Exemplo 5: Profiling de tempo\ndef slow_function():\n    import time; time.sleep(2); return 42\nlogger.opt(record=True).info(\"Resultado: {}\", slow_function())  # Inclui tempo no record\n\n# Exemplo 6: Múltiplas opções\nlogger.opt(lazy=True, colors=False, depth=2).info(\"Log otimizado\")",
+    "cmdOutput": "$ python script.py\n\n# Saída exemplo 1: expensive_function() é chamada APENAS se DEBUG está ativo\n\n2024-05-20 10:30:45.123 | ERROR    | __main__:<module>:2 - Erro processando dados\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\nException: ...\n\n# Exemplo 3: Mensagem sem cores\nMensagem sem cores\n\n# Exemplo 4: Apenas a mensagem\nMensagem sem timestamp, nível ou extra\n\n# Exemplo 5: Log com tempo de execução\n2024-05-20 10:30:47.124 | INFO     | __main__:<module>:5 - Resultado: 42\n# Record contém informação de tempo de execução"
+  },
+  {
+    "cmdName": "logger.exception()",
+    "cmdDescription": "Registra uma exceção com nível ERROR, incluindo automaticamente o traceback completo. É equivalente a logger.opt(exception=True).error()",
+    "cmdCode": "# Exemplo 1: Capturar exceção dentro de except\ntry:\n    1 / 0\nexcept Exception:\n    logger.exception(\"Erro na divisão\")\n\n# Exemplo 2: Registrar exceção com contexto\ntry:\n    open(\"arquivo_inexistente.txt\")\nexcept FileNotFoundError:\n    logger.exception(\"Falha ao abrir arquivo\")\n\n# Exemplo 3: Exceção customizada\nclass CustomError(Exception):\n    pass\n\ntry:\n    raise CustomError(\"Erro customizado\")\nexcept CustomError:\n    logger.exception(\"Erro específico\")",
+    "cmdOutput": "$ python script.py\n\n2024-05-20 10:30:45.123 | ERROR    | __main__:<module>:1 - Erro na divisão\nTraceback (most recent call last):\n  File \"<stdin>\", line 2, in <module>\nZeroDivisionError: division by zero\n\n2024-05-20 10:30:45.124 | ERROR    | __main__:<module>:2 - Falha ao abrir arquivo\nTraceback (most recent call last):\n  File \"<stdin>\", line 2, in <module>\nFileNotFoundError: [Errno 2] No such file or directory: 'arquivo_inexistente.txt'\n\n2024-05-20 10:30:45.125 | ERROR    | __main__:<module>:3 - Erro específico\nTraceback (most recent call last):\n  File \"<stdin>\", line 2, in <module>\nCustomError: Erro customizado"
+  },
+  {
+    "cmdName": "logger.catch() (decorator)",
+    "cmdDescription": "Decorador que automaticamente captura e registra exceções, evitando que o programa seja interrompido.",
+    "cmdCode": "# Exemplo 1: Decorator em função\n@logger.catch\ndef dangerous_function():\n    raise ValueError(\"Algo deu errado\")\n\ndangerous_function()\n\n# Exemplo 2: Decorator com reraise\n@logger.catch(reraise=True)\ndef function_to_retry():\n    raise ConnectionError(\"Falha na conexão\")\n\n# Exemplo 3: Decorator com exclusão de exceções\n@logger.catch(exclude=ValueError)\ndef process_data(data):\n    if data is None:\n        raise ValueError(\"Data is None\")\n    return data\n\nprocess_data(None)\n\n# Exemplo 4: Decorator em método de classe\nclass MyClass:\n    @logger.catch\n    def risky_method(self):\n        raise RuntimeError(\"Erro no método\")",
+    "cmdOutput": "$ python script.py\n\n2024-05-20 10:30:45.123 | ERROR    | __main__:dangerous_function:2 - An error has been caught in function 'dangerous_function', process 'MainProcess' (12345), thread 'MainThread' (12345):\nTraceback (most recent call last):\n  File \"<stdin>\", line 2, in dangerous_function\nValueError: Algo deu errado\n\n2024-05-20 10:30:45.124 | ERROR    | __main__:function_to_retry:2 - An error has been caught in function 'function_to_retry'...\nTraceback (most recent call last):\n  File \"<stdin>\", line 2, in function_to_retry\nConnectionError: Falha na conexão\n\n# Exceção propagada devido ao reraise=True\n\n# Exemplo 3: ValueError NÃO é capturado, a exceção é propagada\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\nValueError: Data is None\n\n2024-05-20 10:30:45.125 | ERROR    | __main__:risky_method:2 - An error has been caught in function 'risky_method'...\nRuntimeError: Erro no método"
+  },
+  {
+    "cmdName": "logger.complete()",
+    "cmdDescription": "Método de conveniência que aguarda a finalização de todos os sinks assíncronos antes de sair. Útil para garantir que todos os logs foram escritos.",
+    "cmdCode": "# Exemplo 1: Aguardar sinks assíncronos\nlogger.add(\"async.log\", enqueue=True)  # Sink com fila\nlogger.info(\"Mensagem assíncrona\")\nlogger.complete()  # Aguarda processamento da fila\n\n# Exemplo 2: Múltiplos sinks assíncronos\nlogger.add(\"file1.log\", enqueue=True)\nlogger.add(\"file2.log\", enqueue=True)\nlogger.info(\"Múltiplos logs\")\nlogger.complete()  # Aguarda todos\n\n# Exemplo 3: Em contexto de shutdown\nimport atexit\natexit.register(logger.complete)\nlogger.add(\"buffered.log\", enqueue=True, mode=\"a\")\nlogger.info(\"Log bufferizado\")",
+    "cmdOutput": "$ python script.py\n\n# O programa espera até que todas as mensagens sejam processadas\n# Saída garantida em todos os arquivos antes do encerramento\n# Exemplo 3: Ao final do programa, complete() é chamado automaticamente"
+  },
+  {
+    "cmdName": "logger.sink()",
+    "cmdDescription": "Cria um sink customizado com funcionalidades avançadas como rotação, retenção, compressão, serialização e formatação.",
+    "cmdCode": "# Exemplo 1: Sink para arquivo com rotação e retenção\nlogger.add(\"app.log\", rotation=\"500 MB\", retention=\"10 days\", compression=\"gz\")\n\n# Exemplo 2: Sink com filtro e formato JSON\nlogger.add(\"app.json\", format=\"{time} {level} {message}\", serialize=True)\n\n# Exemplo 3: Sink com backpressure controlado\nlogger.add(\"slow.log\", enqueue=True, backpressure=1000)\n\n# Exemplo 4: Sink condicional\nlogger.add(\"debug.log\", filter=lambda record: record[\"level\"].name == \"DEBUG\")\n\n# Exemplo 5: Sink com timeout e retry\nlogger.add(\"tcp://server:514\", timeout=10, retry=3)",
+    "cmdOutput": "$ python script.py\n\n# app.log rotaciona a cada 500MB, mantém 10 dias de histórico, comprime em gz\n# app.json contém logs no formato JSON\n# slow.log utiliza fila para evitar lentidão\n# debug.log contém apenas logs de nível DEBUG\n# Conexão TCP com timeout de 10s e até 3 tentativas"
+  },
+  {
+    "cmdName": "Erro: sink já existe",
+    "cmdDescription": "Erro ao tentar adicionar um sink que já foi adicionado anteriormente, sem remover o existente.",
+    "cmdCode": "# Código que gera o erro\nlogger.add(\"file.log\")\nlogger.add(\"file.log\")  # Tentativa de adicionar o mesmo sink\n\n# Alternativa: usar replace\nlogger.add(\"file.log\", mode=\"w\", delay=True)  # Sobrescreve\n\n# Para evitar: remover antes de readicionar\nsink_id = logger.add(\"file.log\")\nlogger.remove(sink_id)\nlogger.add(\"file.log\")  # Ok agora",
+    "cmdOutput": "$ python script.py\n\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\n  File \"/path/to/loguru/_logger.py\", line 666, in add\n    raise ValueError(\"sink {!r} already exists\".format(sink))\nValueError: sink 'file.log' already exists"
+  },
+  {
+    "cmdName": "Erro: nível inválido",
+    "cmdDescription": "Erro ao tentar usar um nível de log que não existe ou tentar criar um nível com nome inválido.",
+    "cmdCode": "# Código que gera o erro\nlogger.level(\"INVALID_LEVEL_NAME_WITH_SPACES\")  # Nome inválido\n\n# Tentativa de usar nível não registrado\nlogger.log(\"NONEXISTENT\", \"Esta mensagem não será logada\")\n\n# Tentativa de criar nível com nome já existente\nlogger.level(\"INFO\", no=20, color=\"<white>\")  # Já existe",
+    "cmdOutput": "$ python script.py\n\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\n  File \"/path/to/loguru/_logger.py\", line 830, in level\n    raise TypeError(f\"Invalid level name: '{name}'\")\nTypeError: Invalid level name: 'INVALID_LEVEL_NAME_WITH_SPACES'\n\n# Para nível não registrado, não há erro, mas a mensagem não é logada\n\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\n  File \"/path/to/loguru/_logger.py\", line 830, in level\n    raise TypeError(f\"Level '{name}' already exists\")\nTypeError: Level 'INFO' already exists"
+  },
+  {
+    "cmdName": "Erro: caminho de arquivo inválido",
+    "cmdDescription": "Erro ao tentar escrever logs em um caminho de arquivo sem permissões ou em diretório inexistente.",
+    "cmdCode": "# Código que gera o erro\nlogger.add(\"/root/protected.log\")  # Sem permissão\n\n# Caminho em diretório que não existe\nlogger.add(\"/tmp/nonexistent/dir/log.log\")\n\n# Caminho com caracteres especiais inválidos\nlogger.add(\"invalid:chars?.log\")\n\n# Solução: criar diretório antes\nimport os\nos.makedirs(\"/tmp/logs\", exist_ok=True)\nlogger.add(\"/tmp/logs/app.log\")",
+    "cmdOutput": "$ python script.py\n\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\n  File \"/path/to/loguru/_logger.py\", line 666, in add\n    raise OSError(\"Cannot create sink: permission denied\")\nOSError: Cannot create sink: permission denied\n\n# Para diretório inexistente\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/nonexistent/dir/log.log'\n\n# Para caracteres inválidos\nOSError: [Errno 22] Invalid argument: 'invalid:chars?.log'"
+  },
+  {
+    "cmdName": "logger._core",
+    "cmdDescription": "Acesso ao core interno do Loguru, permitindo manipulação avançada do sistema de logging (não recomendado para uso comum).",
+    "cmdCode": "# Exemplo 1: Acessar handlers\nhandlers = logger._core.handlers\nprint(f\"Número de handlers: {len(handlers)}\")\n\n# Exemplo 2: Manipular filtros diretamente\nlogger._core.handlers[0]._filter = lambda r: r[\"level\"].no >= 30\n\n# Exemplo 3: Acessar nível mínimo configurado\nmin_level = logger._core.min_level\nprint(f\"Nível mínimo global: {min_level}\")\n\n# Exemplo 4: Manter referências\ncore = logger._core\nlogger.remove()  # Remove sinks padrão\ncore.add_handler(\"file.log\", format=\"{message}\")\nlogger.info(\"Log via core\")",
+    "cmdOutput": "$ python script.py\n\nNúmero de handlers: 1\nNível mínimo global: 10\n2024-05-20 10:30:45.123 | INFO     | __main__:<module>:4 - Log via core"
+  }
   ]
 }
-
 ]
 

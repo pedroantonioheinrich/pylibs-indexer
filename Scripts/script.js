@@ -17,6 +17,7 @@ async function init(){
         const response = await fetch("../Data/data.json");
         globalData = await response.json()
 
+        
         renderCards(globalData)
         setupFilters(globalData)
         setupSearch(globalData)
@@ -37,6 +38,7 @@ function renderCards(dataToShow, append = false) {
     const nextBatch = filteredData.slice(currentIndex, currentIndex + itemsToShow);
     
     nextBatch.forEach((lib) => {
+        console.log(lib.name)
         const newCard = document.createElement('div');
         newCard.classList.add("card-container");
         newCard.innerHTML = `
