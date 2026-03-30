@@ -354,12 +354,11 @@
     .card-container:hover {
         border: 1px solid var(--h1-color);
         box-shadow: 0 0 18px rgba(250, 200, 20, 0.2);
-        min-height:fit-content;
-        width: 360px;
-        margin: 15px;
-        transform: scale(1.04);
-        z-index: 20;
-        backface-visibility: hidden;  
+        transform: scale(1.1);
+        z-index: 100;
+        box-shadow: 0 0 50px rgba(250, 200, 20, 0.4); 
+        overflow-y: auto;
+        scrollbar-width: none;
     }
 
     .card-img { font-size: 35px; margin-bottom: 10px; }
@@ -389,13 +388,6 @@
         transition: all 0.5s ease;
     }
    
-    .card-container:hover .card-description p {
-        -webkit-line-clamp: unset; /* Remove o limite de 3 linhas */
-        display: block; /* Volta para block para mostrar tudo */
-        text-align:start;
-        text-justify:auto;
-    }
-
     .card-tag-category {
         padding: 5px 15px;
         border-radius: 30px;
