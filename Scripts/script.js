@@ -8,16 +8,14 @@ const searchBarBox = document.querySelector(".search-bar-box")
 
 let tagsArr = []
 let globalData = []
-let itemsToShow = 12; 
-let currentIndex = 0;
-let filteredData = [];
+let itemsToShow = 12
+let currentIndex = 0
+let filteredData = []
 
 async function init(){
     try{
-        const response = await fetch("../Data/data.json");
+        const response = await fetch("../Data/data.json")
         globalData = await response.json()
-
-        
         renderCards(globalData)
         setupFilters(globalData)
         setupSearch(globalData)
@@ -30,16 +28,16 @@ async function init(){
 
 function renderCards(dataToShow, append = false) {
     if (!append) {
-        container.innerHTML = "";
-        currentIndex = 0;
-        filteredData = dataToShow;
+        container.innerHTML = ""
+        currentIndex = 0
+        filteredData = dataToShow
     }
 
-    const nextBatch = filteredData.slice(currentIndex, currentIndex + itemsToShow);
+    const nextBatch = filteredData.slice(currentIndex, currentIndex + itemsToShow)
     
     nextBatch.forEach((lib) => {
-        const newCard = document.createElement('div');
-        newCard.classList.add("card-container");
+        const newCard = document.createElement('div')
+        newCard.classList.add("card-container")
         newCard.innerHTML = `
             <div class="card-img">${lib.icon}</div>
             <div class="card-name">${lib.name}</div>
@@ -50,20 +48,20 @@ function renderCards(dataToShow, append = false) {
         `;
 
         newCard.addEventListener('click', () => {
-            window.location.href = `details.html?id=${lib.id}`;
+            window.location.href = `details.html?id=${lib.id}`
         });
 
-        container.appendChild(newCard);
+        container.appendChild(newCard)
     });
 
-    currentIndex += itemsToShow;
+    currentIndex += itemsToShow
 }
 
 window.addEventListener('scroll', () => {
     
     if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
         if (currentIndex < filteredData.length) {
-            renderCards(filteredData, true); 
+            renderCards(filteredData, true)
         }
     }
 });
@@ -73,7 +71,7 @@ function setupFilters(data){
     btnAll.addEventListener('click', () => {
         span.textContent = data.length
         btnAll.classList.add('active')
-        document.querySelectorAll('.tags').forEach(tag => tag.classList.remove('active'));
+        document.querySelectorAll('.tags').forEach(tag => tag.classList.remove('active'))
         renderCards(data)
     }); 
     
@@ -105,57 +103,57 @@ function setupFilters(data){
 
 function setupSearch(data) {
     searchBar.addEventListener("input", (e) => {
-        const searchTerm = e.target.value.toLowerCase().trim();
+        const searchTerm = e.target.value.toLowerCase().trim()
         
         // Filtra os dados para os cards e para a lista
         const filtered = data.filter(lib => {
             return (
                 lib.name.toLowerCase().includes(searchTerm) || 
                 lib.category.toLowerCase().includes(searchTerm)
-            );
-        });
+            )
+        })
 
         // Atualiza os cards principais
-        renderCards(filtered);
-        span.textContent = filtered.length;
+        renderCards(filtered)
+        span.textContent = filtered.length
 
         // Lógica da lista suspensa (searchBarBox)
         if (searchTerm.length > 0 && filtered.length > 0) {
-            renderSearchDropdown(filtered);
-            searchBarBox.classList.add("visible");
+            renderSearchDropdown(filtered)
+            searchBarBox.classList.add("visible")
         } else {
-            searchBarBox.classList.remove("visible");
+            searchBarBox.classList.remove("visible")
             // Limpa após a transição de saída para não "piscar"
-            setTimeout(() => { if(!searchBarBox.classList.contains("visible")) searchBarBox.innerHTML = ""; }, 300);
+            setTimeout(() => { if(!searchBarBox.classList.contains("visible")) searchBarBox.innerHTML = ""; }, 300)
         }
-    });
+    })
 
     // Fecha a busca ao clicar fora
     document.addEventListener("click", (e) => {
         if (!e.target.closest(".search-container")) {
-            searchBarBox.classList.remove("visible");
+            searchBarBox.classList.remove("visible")
         }
-    });
+    })
 }
 
 function renderSearchDropdown(foundData) {
-    searchBarBox.innerHTML = "";
-    const ul = document.createElement('ul');
-    ul.classList.add('ul-search-response');
+    searchBarBox.innerHTML = ""
+    const ul = document.createElement('ul')
+    ul.classList.add('ul-search-response')
 
     foundData.forEach((lib) => {
-        const li = document.createElement('li');
+        const li = document.createElement('li')
         li.innerHTML = `
             <a href="details.html?id=${lib.id}">
                 <span class="search-icon">${lib.icon}</span>
                 <span class="search-name">${lib.name}</span>
                 <span class="search-cat">${lib.category}</span>
             </a>
-        `;
-        ul.appendChild(li);
-    });
+        `
+        ul.appendChild(li)
+    })
 
-    searchBarBox.appendChild(ul);
+    searchBarBox.appendChild(ul)
 }
 
 init()

@@ -41,6 +41,7 @@
         background-color: var(--bg-color);
         color: var(--text-main);
         display: flex;
+        flex-direction: column;
         min-height: 100dvh;
         width: 100dvw;
         transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
@@ -54,6 +55,7 @@
         align-items: center;
         justify-content: space-between;
         transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+        padding-top: 35px;
     }
 
     footer{
@@ -62,10 +64,9 @@
         display: block;
         justify-content: center;
         align-items: center;
-        bottom: 0px;
-        margin-top: 40px;
         padding: 20px;
-        transition: margin-top 0.5s ease;
+        bottom:0;
+        position: relative;
     }
     footer p{
         display: flex;
@@ -323,7 +324,7 @@
         display: flex;  
         flex-wrap: wrap;
         justify-content: center;
-        padding: 50px 0;
+        padding: 30px 0;
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         overflow: hidden;
 
@@ -332,7 +333,7 @@
     .card-container {
         background-color: var(--elements-color);
         height: 220px;
-        width: 360px;
+        width: 300px;
         margin: 15px;
         display: flex;
         flex-direction: column;
@@ -356,7 +357,7 @@
         box-shadow: 0 0 18px rgba(250, 200, 20, 0.2);
         transform: scale(1.1);
         z-index: 100;
-        box-shadow: 0 0 50px rgba(250, 200, 20, 0.4); 
+        box-shadow: 0 0 30px rgba(250, 200, 20, 0.4); 
         overflow-y: auto;
         scrollbar-width: none;
     }
@@ -387,6 +388,7 @@
         text-justify:auto;
         transition: all 0.5s ease;
     }
+
    
     .card-tag-category {
         padding: 5px 15px;
@@ -477,5 +479,7 @@
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
+    <script src="./Scripts/tags.js"></script>
+    <script src="./Scripts/libs.js"></script>
 </body>
 </html>
