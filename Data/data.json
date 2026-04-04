@@ -11060,7 +11060,7 @@
     ],
     "description": "SpiderFoot é uma ferramenta Open Source Intelligence (OSINT) de automação que consulta mais de 200 fontes de dados públicas para coletar informações sobre alvos como domínios, IPs, emails, nomes de pessoas e até endereços Bitcoin . Ela opera em um modelo publisher/subscriber onde módulos alimentam uns aos outros, permitindo desde enumeração de subdomínios e extração de emails até verificação em listas de ameaças e buscas na deep web . Pode ser usada tanto de forma ofensiva (red team/pentest) quanto defensiva para mapear a superfície de exposição de uma organização . Possui interface web (padrão em http://localhost:5001) e poderosa linha de comando .",
     "oficialDocLink": "https://www.spiderfoot.net/",
-    "installCmd": "sudo apt install spiderfoot  # Kali Linux\npip install spiderfoot  # Python pip\ngit clone https://github.com/smicallef/spiderfoot.git",
+    "installCmd": "sudo apt install spiderfoot  # Kali Linux\npip install spiderfoot",
     "importCmd": "from spiderfoot import SpiderFoot  # Uso como biblioteca (avançado)\n# Uso principal: CLI com ./sf.py",
     "commands": [
       {
