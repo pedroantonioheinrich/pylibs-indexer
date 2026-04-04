@@ -11376,5 +11376,156 @@
         "cmdOutput": "$ python timeout.py\n\nTimeout na consulta DNS\nServidor não respondeu\nTimeout com 1s, tentando novamente...\nTimeout com 3s, tentando novamente..."
       }
     ]
+  },
+  {
+    "icon": "🔍",
+    "id": "72",
+    "name": "Censys",
+    "category": "Hacking",
+    "relatedHashtags": [
+      "#censys", "#osint", "#cybersecurity", "#reconnaissance", "#threatintelligence",
+      "#networksecurity", "#attackSurface", "#internetscanning", "#certificatemonitoring",
+      "#hostdiscovery", "#vulnerabilityassessment", "#redteam", "#blueteam", "#infosec",
+      "#assetdiscovery", "#ipenumeration", "#domainrecon", "#darkweb", "#threathunting",
+      "#securityresearch"
+    ],
+    "description": "A biblioteca Censys é um wrapper Python oficial para as APIs da Censys, uma plataforma de inteligência de ameaças que escaneia continuamente toda a internet . Ela permite acessar dados de hosts, certificados, websites e superfície de ataque (ASM). A biblioteca suporta buscas, visualização de resultados detalhados, agregação de dados (relatórios), operações em lote (bulk) e gerenciamento de ativos. Oferece suporte tanto para as APIs mais recentes (Censys Platform v3) quanto para as versões legadas (v1/v2), exigindo autenticação via API Key ou Token de Acesso Pessoal . É amplamente utilizada para pesquisas de segurança, descoberta de ativos expostos e monitoramento contínuo de superfície de ataque .",
+    "oficialDocLink": "https://censys-python.readthedocs.io/",
+    "installCmd": "pip install censys\n# ou para versão mais recente:\npip install --upgrade censys\n# Para usar a nova API Platform (recomendado):\npip install censys-platform",
+    "importCmd": "from censys.search import CensysHosts, CensysCerts\nfrom censys.asm import AsmClient",
+    "commands": [
+      {
+        "cmdName": "CensysHosts()",
+        "cmdDescription": "Inicializa o cliente para a API de Hosts (IPv4 e IPv6) da Censys. É a classe principal para consultar dados de dispositivos e servidores na internet .",
+        "cmdCode": "# Exemplo 1: Inicialização básica\nfrom censys.search import CensysHosts\n\nh = CensysHosts()\n\n# Exemplo 2: Com credenciais explícitas\nh = CensysHosts(api_id='SEU_API_ID', api_secret='SEU_API_SECRET')\n\n# Exemplo 3: Com timeout customizado\nh = CensysHosts(timeout=30)\n\n# Exemplo 4: Para a nova API Platform (v3)\nfrom censys import CensysHosts as CensysHostsV3\n\nh = CensysHostsV3()",
+        "cmdOutput": "$ python censys_init.py\n\nCliente CensysHosts inicializado com sucesso\nAPI versão: v2\nTimeout padrão: 10 segundos"
+      },
+      {
+        "cmdName": ".search()",
+        "cmdDescription": "Realiza buscas no índice de Hosts usando a mesma sintaxe de busca da interface web da Censys. Suporta paginação e permite retornar múltiplas páginas de resultados .",
+        "cmdCode": "# Exemplo 1: Busca básica com paginação\nfrom censys.search import CensysHosts\n\nh = CensysHosts()\nquery = 'service.service_name: HTTP'\n\n# Primeira página\nresults = h.search(query, per_page=5)\nprint(results())\n\n# Exemplo 2: Múltiplas páginas\nfor page in h.search(query, per_page=5, pages=3):\n    for result in page:\n        print(result['ip'])\n\n# Exemplo 3: Busca com filtros avançados\nquery = 'services.port: 443 AND services.tls.certificate.parsed.subject.common_name: *.google.com'\nresults = h.search(query, per_page=20)\n\n# Exemplo 4: Visualizar todos os resultados\nall_results = h.search(query, per_page=10, pages=5)\nprint(all_results.view_all())\n\n# Exemplo 5: Busca limitada a N registros\nlimited = h.search(query, per_page=100, max_records=500)",
+        "cmdOutput": "$ python censys_search.py\n\n[*] Buscando: service.service_name: HTTP\n[+] Encontrados 15234 resultados\n[+] Página 1: 5 resultados\n    - 93.184.216.34\n    - 142.250.217.46\n    - 172.217.29.78\n    ...\n[+] Total de resultados visualizados: 15"
+      },
+      {
+        "cmdName": ".view()",
+        "cmdDescription": "Retorna os dados estruturados completos de um host específico, identificado pelo seu endereço IP .",
+        "cmdCode": "# Exemplo 1: Visualizar host por IP\nfrom censys.search import CensysHosts\n\nh = CensysHosts()\nhost = h.view('8.8.8.8')\nprint(f'IP: {host[\"ip\"]}')\nprint(f'Localização: {host[\"location\"][\"country\"]}')\nprint(f'Serviços: {len(host[\"services\"])}')\n\n# Exemplo 2: Com timestamp histórico (requer acesso histórico)\nhost = h.view('8.8.8.8', at_time='2024-01-01T00:00:00Z')\n\n# Exemplo 3: Usando objeto date\nfrom datetime import date\nhost = h.view('1.1.1.1', at_time=date(2024, 1, 1))\n\n# Exemplo 4: Acessando serviços específicos\nfor service in host['services']:\n    if service['port'] == 443:\n        print(f'Certificado: {service[\"tls\"][\"certificate\"][\"parsed\"][\"subject_dn\"]}')",
+        "cmdOutput": "$ python censys_view.py\n\nIP: 8.8.8.8\nLocalização: United States\nServiços: 7\nCertificado: CN=*.google.com, O=Google LLC, L=Mountain View, S=California, C=US"
+      },
+      {
+        "cmdName": ".aggregate()",
+        "cmdDescription": "Cria relatórios agregados baseados em uma consulta e um campo de agregação. Similar à funcionalidade 'Report Builder' da interface web .",
+        "cmdCode": "# Exemplo 1: Agregação por porta\nfrom censys.search import CensysHosts\n\nh = CensysHosts()\nreport = h.aggregate(\n    'service.service_name: HTTP',\n    'services.port',\n    num_buckets=5\n)\n\nfor bucket in report['buckets']:\n    print(f'Porta {bucket[\"key\"]}: {bucket[\"doc_count\"]} hosts')\n\n# Exemplo 2: Agregação por país\nreport = h.aggregate(\n    'services.port: 443',\n    'location.country',\n    num_buckets=10\n)\n\n# Exemplo 3: Com ordenação\nreport = h.aggregate(\n    'services.service_name: SSH',\n    'location.country',\n    num_buckets=20\n)\n\n# Exemplo 4: Salvando relatório\nimport json\nwith open('report.json', 'w') as f:\n    json.dump(report, f, indent=2)",
+        "cmdOutput": "$ python censys_aggregate.py\n\n[*] Agregando service.service_name: HTTP\n[+] Relatório gerado com 5 buckets\nPorta 80: 1245632 hosts\nPorta 8080: 345621 hosts\nPorta 443: 234567 hosts\nPorta 8000: 123456 hosts\nPorta 8888: 87654 hosts"
+      },
+      {
+        "cmdName": ".view_host_names()",
+        "cmdDescription": "Retorna a lista de nomes de host (DNS) associados a um determinado endereço IP .",
+        "cmdCode": "# Exemplo 1: Buscar nomes de host\nfrom censys.search import CensysHosts\n\nh = CensysHosts()\nnames = h.view_host_names('1.1.1.1')\nprint(f'Nomes encontrados: {names}')\n\n# Exemplo 2: Iterar sobre nomes\nfor name in names:\n    print(f'- {name}')\n\n# Exemplo 3: Combinar com busca\nip = '8.8.8.8'\nhost_data = h.view(ip)\nhost_names = h.view_host_names(ip)\nprint(f'{ip} -> {host_names}')",
+        "cmdOutput": "$ python censys_hostnames.py\n\nNomes encontrados: ['one.one.one.one', '1dot1dot1dot1.cloudflare-dns.com']\n- one.one.one.one\n- 1dot1dot1dot1.cloudflare-dns.com\n8.8.8.8 -> ['dns.google']"
+      },
+      {
+        "cmdName": ".view_host_events()",
+        "cmdDescription": "Retorna o histórico de eventos (mudanças) para um host específico ao longo do tempo. Requer acesso à API histórica .",
+        "cmdCode": "# Exemplo 1: Eventos básicos\nfrom censys.search import CensysHosts\n\nh = CensysHosts()\nevents = h.view_host_events('1.1.1.1')\nfor event in events:\n    print(f'[{event[\"timestamp\"]}] {event[\"event_type\"]}')\n\n# Exemplo 2: Com intervalo de datas\nfrom datetime import date\nevents = h.view_host_events(\n    '1.1.1.1',\n    start_time=date(2024, 1, 1),\n    end_time=date(2024, 1, 31)\n)\n\n# Exemplo 3: Filtrar por tipo de evento\nfor event in events:\n    if event['event_type'] == 'port_changed':\n        print(f'Porta alterada: {event[\"details\"]}')",
+        "cmdOutput": "$ python censys_events.py\n\n[2024-01-15T10:30:00Z] service_added\n[2024-01-14T08:20:00Z] certificate_updated\n[2024-01-10T15:45:00Z] port_changed\nPorta alterada: {'old_port': 80, 'new_port': 443}"
+      },
+      {
+        "cmdName": ".metadata()",
+        "cmdDescription": "Retorna metadados sobre o índice de Hosts, incluindo informações sobre os serviços disponíveis e estatísticas do dataset .",
+        "cmdCode": "# Exemplo 1: Obter metadados\nfrom censys.search import CensysHosts\n\nh = CensysHosts()\nmeta = h.metadata()\n\nprint(f'Serviços disponíveis: {meta.get(\"services\")}')\nprint(f'Total de hosts: {meta.get(\"total_hosts\")}')\nprint(f'Última atualização: {meta.get(\"last_updated\")}')\n\n# Exemplo 2: Explorar serviços\nfor service in meta.get('services', [])[:10]:\n    print(f'- {service[\"name\"]}: {service[\"count\"]} hosts')",
+        "cmdOutput": "$ python censys_metadata.py\n\nServiços disponíveis: ['HTTP', 'HTTPS', 'SSH', 'DNS', 'SMTP', ...]\nTotal de hosts: 3857423456\nÚltima atualização: 2025-12-15T00:00:00Z\n- HTTP: 1245632456 hosts\n- HTTPS: 987654321 hosts\n- SSH: 456789012 hosts"
+      },
+      {
+        "cmdName": ".account()",
+        "cmdDescription": "Retorna informações sobre a conta da Censys autenticada, incluindo email, plano e limites de uso .",
+        "cmdCode": "# Exemplo 1: Informações da conta\nfrom censys.search import CensysHosts\n\nh = CensysHosts()\naccount = h.account()\nprint(f'Email: {account[\"email\"]}')\nprint(f'Plano: {account[\"plan\"]}')\nprint(f'Cota: {account[\"quota\"]}')\n\n# Exemplo 2: Verificar cota restante\nquota = h.quota()\nprint(f'Consultas restantes: {quota[\"remaining\"]}')\nprint(f'Limite mensal: {quota[\"limit\"]}')\n\n# Exemplo 3: Verificar permissões\nif account.get('features', {}).get('historical_data'):\n    print('Acesso a dados históricos disponível')",
+        "cmdOutput": "$ python censys_account.py\n\nEmail: usuario@example.com\nPlano: researcher\nCota: {'limit': 1000, 'used': 342, 'remaining': 658}\nConsultas restantes: 658\nLimite mensal: 1000\nAcesso a dados históricos: Sim"
+      },
+      {
+        "cmdName": "CensysCerts()",
+        "cmdDescription": "Inicializa o cliente para a API de Certificados, permitindo buscar e visualizar certificados SSL/TLS por fingerprint .",
+        "cmdCode": "# Exemplo 1: Inicializar cliente de certificados\nfrom censys.search import CensysCerts\n\nc = CensysCerts()\n\n# Exemplo 2: Buscar certificados\nquery = 'parsed.names: *.google.com'\nresults = c.search(query, per_page=5)\n\nfor cert in results():\n    print(f'Fingerprint: {cert[\"fingerprint_sha256\"]}')\n    print(f'Nomes: {cert[\"parsed\"][\"names\"]}')\n\n# Exemplo 3: Visualizar certificado específico\ncert = c.view('a762bf68f167f6fbdf2ab00fdefeb8b96f91335ad6b483b482dfd42c179be076')\nprint(f'Emissor: {cert[\"parsed\"][\"issuer_dn\"]}')\nprint(f'Validade: {cert[\"parsed\"][\"validity\"][\"start\"]} - {cert[\"parsed\"][\"validity\"][\"end\"]}')",
+        "cmdOutput": "$ python censys_certs.py\n\nFingerprint: a762bf68f167f6fbdf2ab00fdefeb8b96f91335ad6b483b482dfd42c179be076\nNomes: ['*.google.com', 'google.com']\nEmissor: CN=GTS CA 1O1, O=Google Trust Services, C=US\nValidade: 2024-01-01T00:00:00Z - 2025-01-01T00:00:00Z"
+      },
+      {
+        "cmdName": ".bulk()",
+        "cmdDescription": "Recupera dados estruturados para múltiplos certificados em uma única requisição, usando suas fingerprints SHA-256 .",
+        "cmdCode": "# Exemplo 1: Bulk lookup de certificados\nfrom censys.search import CensysCerts\n\nc = CensysCerts()\nfingerprints = [\n    'a762bf68f167f6fbdf2ab00fdefeb8b96f91335ad6b483b482dfd42c179be076',\n    'fce621c0dc1c666d03d660472f636ce91e66e96460545f0da7eb1a24873e2f70'\n]\n\ncerts = c.bulk(fingerprints)\nfor fingerprint, cert_data in certs.items():\n    print(f'Certificado {fingerprint[:16]}...')\n    print(f'  Emissor: {cert_data[\"parsed\"][\"issuer_dn\"]}')\n\n# Exemplo 2: Bulk com validação\nif len(fingerprints) > 100:\n    print('Limite de 100 fingerprints por requisição')\nelse:\n    results = c.bulk(fingerprints)",
+        "cmdOutput": "$ python censys_bulk.py\n\nCertificado a762bf68f167f6fb...\n  Emissor: CN=GTS CA 1O1, O=Google Trust Services, C=US\nCertificado fce621c0dc1c666d...\n  Emissor: CN=DigiCert TLS RSA SHA256 2020 CA1, O=DigiCert Inc, C=US"
+      },
+      {
+        "cmdName": "CensysData()",
+        "cmdDescription": "Cliente para a API de Dados da Censys, que permite acessar séries de dados brutos de scans históricos .",
+        "cmdCode": "# Exemplo 1: Acessar dados brutos\nfrom censys.search import CensysData\n\ndata = CensysData()\n\n# Exemplo 2: Visualizar resultado específico\nresult = data.view_result('ipv4_2024', '20241215')\nprint(f'Total de resultados: {len(result)}')\n\n# Exemplo 3: Listar séries disponíveis\nseries = data.list_series()\nfor s in series[:5]:\n    print(f'- {s[\"name\"]}: {s[\"description\"]}')\n\n# Exemplo 4: Buscar em séries\n# Nota: O método search pode variar conforme versão da API",
+        "cmdOutput": "$ python censys_data.py\n\nTotal de resultados: 2456789\n- ipv4_2024: IPv4 scan data for 2024\n- certificates_2024: Certificate transparency logs 2024\n- domains_2024: Domain resolution data 2024"
+      },
+      {
+        "cmdName": "AsmClient()",
+        "cmdDescription": "Cliente para a API de Attack Surface Management (ASM) da Censys, usado para gerenciar ativos, eventos, seeds e riscos da organização .",
+        "cmdCode": "# Exemplo 1: Inicializar cliente ASM\nfrom censys.asm import AsmClient\n\nasm = AsmClient(api_key='SUA_ASM_API_KEY')\n\n# Exemplo 2: Listar ativos\nassets = asm.assets.list()\nfor asset in assets[:5]:\n    print(f'{asset[\"type\"]}: {asset[\"value\"]}')\n\n# Exemplo 3: Gerenciar seeds\nseeds = asm.seeds.list()\nprint(f'Total de seeds: {len(seeds)}')\n\n# Exemplo 4: Configurar credencial via environment\n# export CENSYS_ASM_API_KEY='sua_chave_aqui'",
+        "cmdOutput": "$ python censys_asm.py\n\nCliente ASM inicializado\nDOMAIN: example.com\nIP: 192.168.1.1\nCERTIFICATE: *.example.com\nTotal de seeds: 15"
+      },
+      {
+        "cmdName": "Risksv2()",
+        "cmdDescription": "Classe para interagir com a API de Riscos v2, permitindo recuperar e gerenciar instâncias e tipos de risco identificados pela Censys ASM .",
+        "cmdCode": "# Exemplo 1: Obter instâncias de risco\nfrom censys.asm.risks.v2 import Risksv2\n\nrisks = Risksv2()\ninstances = risks.get_risk_instances(include_events=True)\n\nfor risk in instances.get('risks', [])[:5]:\n    print(f'Risco: {risk[\"name\"]}')\n    print(f'Severidade: {risk[\"severity\"]}')\n    print(f'Ativo: {risk[\"asset\"]}')\n\n# Exemplo 2: Buscar instâncias específicas\nsearch_results = risks.search_risk_instances({\n    'query': 'severity: HIGH',\n    'limit': 10\n})\n\n# Exemplo 3: Obter tipos de risco\nrisk_types = risks.get_risk_types()\nfor rtype in risk_types.get('types', [])[:10]:\n    print(f'- {rtype[\"name\"]}: {rtype[\"description\"]}')",
+        "cmdOutput": "$ python censys_risks.py\n\nRisco: Expired Certificate\nSeveridade: HIGH\nAtivo: example.com\nRisco: Open Database\nSeveridade: CRITICAL\nAtivo: 192.168.1.100:3306\n- expired_ssl_cert: SSL certificate has expired\n- open_ssh: SSH service accessible from internet\n- exposed_bucket: Publicly accessible cloud storage"
+      },
+      {
+        "cmdName": "CensysIPv4() [DEPRECATED]",
+        "cmdDescription": "Cliente legado para o índice IPv4 (v1). **Depreciado** - usar CensysHosts para nova API .",
+        "cmdCode": "# Exemplo 1: Uso legado (não recomendado)\nimport censys.ipv4\n\nc = censys.ipv4.CensysIPv4(api_id='ID', api_secret='SECRET')\n\n# Busca em IPv4\nfor page in c.search('location.country: Japan', max_records=10):\n    print(page)\n\n# Exemplo 2: Aviso de depreciação\n# AVISO: Esta API será descontinuada. Migre para CensysHosts\n\n# Exemplo 3: Alternativa moderna\nfrom censys.search import CensysHosts\n\nh = CensysHosts()\nresults = h.search('location.country: Japan', per_page=10)",
+        "cmdOutput": "$ python censys_legacy.py\n\nDeprecationWarning: CensysIPv4 v1 está depreciado. Use CensysHosts.\n[{'ip': 'xxx.xxx.xxx.xxx', ...}]"
+      },
+      {
+        "cmdName": "CensysWebsites() [DEPRECATED]",
+        "cmdDescription": "Cliente legado para o índice de Websites (v1). **Depreciado** - usar CensysHosts para funcionalidade equivalente .",
+        "cmdCode": "# Exemplo 1: Uso legado (não recomendado)\nimport censys.websites\n\nc = censys.websites.CensysWebsites(api_id='ID', api_secret='SECRET')\n\n# Gerar relatório\nreport = c.report('\"welcome to\"', field='80.http.get.headers.server.raw', buckets=5)\nprint(report)\n\n# Exemplo 2: Migração para CensysHosts\nfrom censys.search import CensysHosts\n\nh = CensysHosts()\nreport = h.aggregate(\n    'services.http.response.body: welcome',\n    'services.http.response.headers.server',\n    num_buckets=5\n)",
+        "cmdOutput": "$ python censys_websites_legacy.py\n\nDeprecationWarning: CensysWebsites v1 está depreciado. Use CensysHosts.aggregate()"
+      },
+      {
+        "cmdName": "Erro: Unauthorized (401)",
+        "cmdDescription": "Erro de autenticação. Ocorre quando as credenciais da API (API ID/Secret ou Token) são inválidas ou expiraram .",
+        "cmdCode": "# Exemplo 1: Tratando erro 401\nfrom censys.search import CensysHosts\nfrom censys.common.exceptions import CensysUnauthorizedException\n\ntry:\n    h = CensysHosts()\n    results = h.search('service.service_name: HTTP', per_page=1)\nexcept CensysUnauthorizedException as e:\n    print(f'Erro de autenticação: {e}')\n    print('Verifique suas credenciais Censys')\n\n# Exemplo 2: Configuração correta\n# Opção 1: Configurar via CLI\n# $ censys config\n# Opção 2: Variáveis de ambiente\n# export CENSYS_API_ID='seu_id'\n# export CENSYS_API_SECRET='sua_secret'\n\n# Exemplo 3: Verificar credenciais\nh = CensysHosts()\ntry:\n    account = h.account()\n    print('Autenticação bem-sucedida')\nexcept CensysUnauthorizedException:\n    print('Falha na autenticação')",
+        "cmdOutput": "$ python censys_401.py\n\nErro de autenticação: 401 Unauthorized - Invalid API credentials\nVerifique suas credenciais Censys\nFalha na autenticação"
+      },
+      {
+        "cmdName": "Erro: Rate Limit (429)",
+        "cmdDescription": "Erro de limite de requisições. Ocorre quando o número de consultas excede a cota da conta .",
+        "cmdCode": "# Exemplo 1: Tratando rate limit\nfrom censys.search import CensysHosts\nfrom censys.common.exceptions import CensysRateLimitException\nimport time\n\nh = CensysHosts()\n\ndef safe_search(query, max_retries=3):\n    for attempt in range(max_retries):\n        try:\n            return h.search(query, per_page=10)\n        except CensysRateLimitException as e:\n            wait_time = 2 ** attempt  # Exponential backoff\n            print(f'Rate limit atingido. Aguardando {wait_time}s...')\n            time.sleep(wait_time)\n    raise Exception('Max retries exceeded')\n\nresults = safe_search('service.service_name: HTTP')\n\n# Exemplo 2: Verificar cota antes de buscar\nquota = h.quota()\nif quota['remaining'] > 0:\n    results = h.search('query', per_page=quota['remaining'])\nelse:\n    print('Cota esgotada. Aguarde o próximo mês.')",
+        "cmdOutput": "$ python censys_429.py\n\nRate limit atingido. Aguardando 1s...\nRate limit atingido. Aguardando 2s...\n[+] Busca realizada com sucesso\nCota esgotada. Aguarde o próximo mês."
+      },
+      {
+        "cmdName": "Erro: NotFound (404)",
+        "cmdDescription": "Erro de recurso não encontrado. Ocorre quando o IP ou fingerprint solicitado não existe no índice da Censys .",
+        "cmdCode": "# Exemplo 1: Tratando 404\nfrom censys.search import CensysHosts\nfrom censys.common.exceptions import CensysNotFoundException\n\nh = CensysHosts()\n\ntry:\n    host = h.view('0.0.0.0')  # IP inválido\nexcept CensysNotFoundException as e:\n    print(f'Host não encontrado: {e}')\n\n# Exemplo 2: Verificar existência antes de view\ndef safe_view(ip):\n    try:\n        return h.view(ip)\n    except CensysNotFoundException:\n        print(f'IP {ip} não está indexado pela Censys')\n        return None\n\nresult = safe_view('192.0.2.1')\nif result:\n    print('Host encontrado')",
+        "cmdOutput": "$ python censys_404.py\n\nHost não encontrado: 404 Not Found - IP not in index\nIP 192.0.2.1 não está indexado pela Censys"
+      },
+      {
+        "cmdName": "Erro: BadRequest (400)",
+        "cmdDescription": "Erro de requisição inválida. Ocorre quando a sintaxe da consulta ou os parâmetros fornecidos são inválidos .",
+        "cmdCode": "# Exemplo 1: Tratando 400\nfrom censys.search import CensysHosts\nfrom censys.common.exceptions import CensysBadRequestException\n\nh = CensysHosts()\n\n# Query com sintaxe inválida\ntry:\n    results = h.search('service.service_name: INVALID!!!', per_page=5)\nexcept CensysBadRequestException as e:\n    print(f'Erro na consulta: {e}')\n    print('Verifique a sintaxe da busca')\n\n# Exemplo 2: Validação de query\nvalid_query = 'services.port: 80 AND services.service_name: HTTP'\ntry:\n    results = h.search(valid_query)\nexcept CensysBadRequestException:\n    print('Query inválida')\nelse:\n    print('Query válida')",
+        "cmdOutput": "$ python censys_400.py\n\nErro na consulta: 400 Bad Request - Invalid search syntax\nVerifique a sintaxe da busca\nQuery válida"
+      },
+      {
+        "cmdName": "CLI: censys config",
+        "cmdDescription": "Comando de linha de comando para configurar as credenciais de autenticação da API Censys .",
+        "cmdCode": "# Exemplo 1: Configurar credenciais\n# $ censys config\n\n# Exemplo 2: Configurar ASM\n# $ censys asm config\n\n# Exemplo 3: Usar variáveis de ambiente\n# export CENSYS_API_ID='seu_api_id'\n# export CENSYS_API_SECRET='sua_api_secret'\n# export CENSYS_ASM_API_KEY='sua_asm_key'\n\n# Exemplo 4: Verificar configuração\n# $ censys config --show\n\n# Exemplo 5: Remover configuração\n# $ censys config --clear",
+        "cmdOutput": "$ censys config\n\nCensys API ID: XXXXX\nCensys API Secret: XXXXX\nDo you want color output? [y/n]: y\n\nSuccessfully authenticated for user@example.com\n\n$ censys config --show\nCurrent configuration:\n  API ID: XXXXX\n  API Secret: ********\n  Color output: yes"
+      },
+      {
+        "cmdName": "CLI: censys search",
+        "cmdDescription": "Comando CLI para realizar buscas diretamente no terminal usando a API Censys .",
+        "cmdCode": "# Exemplo 1: Busca básica\n# $ censys search 'service.service_name: HTTP'\n\n# Exemplo 2: Com limite de resultados\n# $ censys search 'services.port: 443' --max-records 10\n\n# Exemplo 3: Especificar índice\n# $ censys search '*.google.com' --index certificates\n\n# Exemplo 4: Saída em JSON\n# $ censys search 'location.country: Brazil' --format json\n\n# Exemplo 5: Paginação\n# $ censys search 'service.service_name: SSH' --pages 3 --per-page 20\n\n# Exemplo 6: Com fields específicos\n# $ censys search 'services.port: 8080' --fields ip,location.country",
+        "cmdOutput": "$ censys search 'service.service_name: HTTP' --max-records 5\n\nIP               | Location              | Ports\n-----------------|-----------------------|------\n93.184.216.34    | United States         | 80, 443\n142.250.217.46   | United States         | 80, 443\n172.217.29.78    | United States         | 80, 443\n5.45.107.20      | Netherlands           | 80, 8080\n31.13.79.246     | United States         | 80, 443\n\nFound 5 results"
+      },
+      {
+        "cmdName": "CLI: censys view",
+        "cmdDescription": "Comando CLI para visualizar detalhes completos de um host ou certificado específico .",
+        "cmdCode": "# Exemplo 1: Visualizar host\n# $ censys view 8.8.8.8\n\n# Exemplo 2: Visualizar certificado\n# $ censys view a762bf68f167f6fbdf2ab00fdefeb8b96f91335ad6b483b482dfd42c179be076 --index certificates\n\n# Exemplo 3: Com timestamp histórico\n# $ censys view 1.1.1.1 --at-time 2024-01-01T00:00:00Z\n\n# Exemplo 4: Saída resumida\n# $ censys view 8.8.8.8 --fields ip,location.country,services.port",
+        "cmdOutput": "$ censys view 8.8.8.8\n\nIP: 8.8.8.8\nLocation: United States, California, Mountain View\nASN: AS15169 (Google LLC)\nServices:\n  - Port 53: DNS\n  - Port 443: HTTPS (TLS 1.3)\n  - Port 853: DNS-over-TLS\n\nUpdated: 2025-12-15T10:30:00Z"
+      }
+    ]
   }
 ]
