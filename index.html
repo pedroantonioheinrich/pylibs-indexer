@@ -35,7 +35,9 @@
         box-sizing: border-box;
         font-family: 'Inter', sans-serif;
     }
-
+    html {
+        scroll-behavior: smooth;
+    }
 
     body {
         background-color: var(--bg-color);
@@ -201,7 +203,7 @@
         padding: 10px;
     }
 
-    /* Classe ativa controlada pelo JS */
+
     .search-bar-box.visible {
         opacity: 1;
         visibility: visible;
@@ -341,7 +343,7 @@
         align-items: flex-start;
         border-radius: 10px;
         border: 1px solid var(--border-smooth); 
-        transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);  /* modificado */
+        transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);  
         cursor: pointer;
         padding: 20px;
         text-decoration: none;
@@ -355,11 +357,14 @@
     .card-container:hover {
         border: 1px solid var(--h1-color);
         box-shadow: 0 0 18px rgba(250, 200, 20, 0.2);
-        transform: scale(1.1);
+        transform: scale(1.2);
         z-index: 100;
         box-shadow: 0 0 30px rgba(250, 200, 20, 0.4); 
         overflow-y: auto;
-        scrollbar-width: none;
+        scrollbar-width:none;
+        scroll-behavior: smooth;
+        overscroll-behavior: contain;
+        
     }
 
     .card-img { font-size: 35px; margin-bottom: 10px; }
@@ -382,11 +387,17 @@
         line-height: 1.4;
         overflow: hidden;
         display: -webkit-box;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         text-align:start;
         text-justify:auto;
-        transition: all 0.5s ease;
+        transition: all 1s ease;
+    }
+
+    .card-container:hover .card-description p {
+        -webkit-line-clamp: unset;
+        display: block;
+        
     }
 
    
@@ -463,11 +474,12 @@
                 <div class="tag-all">🚀 Ver Todas</div>
             </div>
         <div class="how-many-libs">
-            <p><span>0</span> Biliotecas encontradas</p>
+            <p><span>0</span> Bibliotecas Python Documentadas</p>
         </div>
         </section>
         <section class="content">
         </section>
+        <div class="hashtags"></div>
         <footer>
             <p>PyLibs — O manual de sobrevivência do desenvolvedor Python.🐍</p>
             <p>Desenvolvido por Pedro Antônio Heinrich - @streetegist</p>
@@ -477,9 +489,9 @@
     <script type="module" src="../Scripts/speed-insights.js"></script>
     <script>
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-    </script>
+        </script>
     <script defer src="/_vercel/insights/script.js"></script>
-    <script src="./Scripts/tags.js"></script>
+    <script src="./Scripts/hashtags.js"></script>
     <script src="./Scripts/libs.js"></script>
 </body>
 </html>

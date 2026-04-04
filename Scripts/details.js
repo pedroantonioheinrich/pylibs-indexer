@@ -126,6 +126,7 @@ function renderCommand(cmd) {
                 <pre>${cmd.cmdOutput}</pre>
             </div>
         </div>
+
 `
 
 

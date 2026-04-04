@@ -133,18 +133,18 @@
     }
 
     #commands-menu {
-        max-height: 60vh;         
+        max-height: 43dvh;         
         overflow-y: auto;  
         overflow-x: auto;     
         padding-right: 5px;      
-        
         list-style: none;
         margin: 0;
     }
 
     #commands-menu::-webkit-scrollbar {
         width: 4px;
-        height: 4px;            
+        height: 4px;   
+        scroll-behavior: smooth;         
     }
 
     #commands-menu::-webkit-scrollbar-thumb {
@@ -405,15 +405,6 @@
                 <h1 id="lib-name">Carregando...</h1>
             </div>
 
-            <!-- <nav class="about-nav">
-                <div class="about-item">
-                    <span>>💡 SOBRE A LIB</span>
-                    <div class="about-pill">
-                        
-                    </div>
-                </div>
-            </nav> -->
-
             <nav class="setup-nav">
                 <div class="setup-item">
                     <span>>_ INSTALAÇÃO</span>
@@ -440,6 +431,10 @@
             <div id="command-display" class="display-area">
                 </div>
         </section>
+
+        
+
+        
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
