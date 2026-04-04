@@ -9630,7 +9630,7 @@
     "#Permissions",
     "#Extensions"
   ],
-  "category": "APIs e Integração",
+  "category": "API",
   "description": "Strawberry é uma biblioteca moderna para criar APIs GraphQL em Python usando type hints e dataclasses. Oferece integração nativa com FastAPI, Django, Flask e outros frameworks, suporte completo a async/await, sistema de permissões, dataloaders para otimização de queries, subscriptions em tempo real via WebSocket, Apollo Federation para arquiteturas de microserviços, e extensões customizáveis. Ideal para construir APIs GraphQL type-safe e performáticas com sintaxe Pythônica e validação automática.",
   "oficialDocLink": "https://strawberry.rocks/docs",
   "installCmd": "pip install strawberry-graphql",
