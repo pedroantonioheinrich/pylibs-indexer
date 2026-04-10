@@ -11527,5 +11527,452 @@
         "cmdOutput": "$ censys view 8.8.8.8\n\nIP: 8.8.8.8\nLocation: United States, California, Mountain View\nASN: AS15169 (Google LLC)\nServices:\n  - Port 53: DNS\n  - Port 443: HTTPS (TLS 1.3)\n  - Port 853: DNS-over-TLS\n\nUpdated: 2025-12-15T10:30:00Z"
       }
     ]
-  }
+  },
+  {
+  "icon": "🌐",
+  "id": "73",
+  "name": "curl_cffi",
+  "relatedHashtags": [
+    "#curl_cffi",
+    "#python",
+    "#webscraping",
+    "#httpclient",
+    "#tlsfingerprint",
+    "#ja3",
+    "#impersonate",
+    "#antibot",
+    "#cloudflare",
+    "#requests",
+    "#asyncio",
+    "#websocket",
+    "#proxy",
+    "#http2",
+    "#http3",
+    "#scraping",
+    "#automation",
+    "#libcurl",
+    "#fingerprinting",
+    "#aiohttp",
+    "#cffi",
+    "#curl",
+    "#bypass",
+    "#session",
+    "#tls"
+  ],
+  "category": "Web",
+  "description": "curl_cffi é uma biblioteca Python que fornece bindings para o curl-impersonate via CFFI (C Foreign Function Interface). Diferente de outros clientes HTTP puramente em Python como httpx ou requests, curl_cffi pode impersonar assinaturas TLS/JA3 e fingerprints HTTP/2 de navegadores reais como Chrome, Safari e Edge, permitindo bypassar sistemas anti-bot avançados baseados em TLS fingerprinting. Suporta requisições síncronas e assíncronas (asyncio), WebSockets, proxies HTTP/SOCKS, HTTP/2, HTTP/3, upload de arquivos multipart, streaming de respostas, gerenciamento de sessões e cookies, retry automático, e uma API de baixo nível via Curl/CurlOpt para controle total sobre as requisições.",
+  "oficialDocLink": "https://curl-cffi.readthedocs.io/",
+  "installCmd": "pip install curl-cffi",
+  "importCmd": "from curl_cffi import requests",
+  "commands": [
+    {
+      "cmdName": "requests.get()",
+      "cmdDescription": "Realiza uma requisição HTTP GET. Suporta o parâmetro impersonate para simular fingerprint de navegadores reais (chrome, safari, safari_ios, etc.), bypassando proteções anti-bot baseadas em TLS.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: GET simples\nr = requests.get('https://httpbin.org/get')\nprint(r.status_code)\nprint(r.text)\n\n# Exemplo 2: GET com impersonacao de navegador\nr = requests.get('https://tls.browserleaks.com/json', impersonate='chrome')\nprint(r.json())\n\n# Exemplo 3: GET com parametros de URL\nparams = {'key1': 'valor1', 'key2': 'valor2'}\nr = requests.get('https://httpbin.org/get', params=params)\nprint(r.url)\n\n# Exemplo 4: GET com headers customizados\nheaders = {'User-Agent': 'MeuBot/1.0', 'Accept-Language': 'pt-BR'}\nr = requests.get('https://httpbin.org/headers', headers=headers)\nprint(r.json())\n\n# Exemplo 5: GET com timeout\nr = requests.get('https://httpbin.org/get', timeout=10)\nprint(r.elapsed)",
+      "cmdOutput": "$ python script.py\n\n200\n{\n  'args': {},\n  'headers': {...},\n  'url': 'https://httpbin.org/get'\n}\n\n{'ja3n_hash': 'aa56c057ad164ec4fdcb7a5a283be9fc', ...}\n\nhttps://httpbin.org/get?key1=valor1&key2=valor2\n\n{'headers': {'Accept-Language': 'pt-BR', 'User-Agent': 'MeuBot/1.0'}}\n\n0.342"
+    },
+    {
+      "cmdName": "requests.post()",
+      "cmdDescription": "Realiza uma requisição HTTP POST. Suporta envio de dados como formulário (data={}), JSON (json={}), dados binários (data=b'...') e upload de arquivos (files={}).",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: POST com dados de formulario\nr = requests.post('https://httpbin.org/post', data={'nome': 'Luke', 'idade': '30'})\nprint(r.json())\n\n# Exemplo 2: POST com JSON\nr = requests.post('https://httpbin.org/post', json={'nome': 'Luke', 'ativo': True})\nprint(r.json())\n\n# Exemplo 3: POST com dados binarios\nr = requests.post('https://httpbin.org/post', data=b'dados-binarios-aqui')\nprint(r.text)\n\n# Exemplo 4: POST com impersonacao\nr = requests.post(\n    'https://httpbin.org/post',\n    json={'query': 'hello'},\n    impersonate='chrome'\n)\nprint(r.status_code)\n\n# Exemplo 5: POST com arquivos\nfiles = {'arquivo': open('foto.png', 'rb')}\nr = requests.post('https://httpbin.org/post', files=files)\nprint(r.json())",
+      "cmdOutput": "$ python script.py\n\n{'form': {'nome': 'Luke', 'idade': '30'}, ...}\n\n{'data': '{\"nome\": \"Luke\", \"ativo\": true}', ...}\n\n{...dados-binarios-aqui...}\n\n200\n\n{'files': {'arquivo': '...'}, ...}"
+    },
+    {
+      "cmdName": "requests.put()",
+      "cmdDescription": "Realiza uma requisição HTTP PUT para atualizar recursos em APIs REST.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: PUT com JSON\nr = requests.put(\n    'https://httpbin.org/put',\n    json={'id': 1, 'nome': 'Luke Atualizado'}\n)\nprint(r.status_code)\nprint(r.json())\n\n# Exemplo 2: PUT com impersonacao e headers de auth\nr = requests.put(\n    'https://api.exemplo.com/usuarios/1',\n    json={'status': 'ativo'},\n    headers={'Authorization': 'Bearer token123'},\n    impersonate='chrome'\n)\nprint(r.status_code)",
+      "cmdOutput": "$ python script.py\n\n200\n{'json': {'id': 1, 'nome': 'Luke Atualizado'}, ...}\n\n200"
+    },
+    {
+      "cmdName": "requests.patch()",
+      "cmdDescription": "Realiza uma requisição HTTP PATCH para atualizar parcialmente um recurso em APIs REST.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: PATCH com JSON\nr = requests.patch(\n    'https://httpbin.org/patch',\n    json={'campo': 'novo_valor'}\n)\nprint(r.status_code)\nprint(r.json())\n\n# Exemplo 2: PATCH com autenticacao basica\nr = requests.patch(\n    'https://api.exemplo.com/items/5',\n    json={'preco': 99.90},\n    auth=('usuario', 'senha')\n)\nprint(r.text)",
+      "cmdOutput": "$ python script.py\n\n200\n{'json': {'campo': 'novo_valor'}, ...}\n\n{'id': 5, 'preco': 99.90}"
+    },
+    {
+      "cmdName": "requests.delete()",
+      "cmdDescription": "Realiza uma requisição HTTP DELETE para remover recursos em APIs REST.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: DELETE simples\nr = requests.delete('https://httpbin.org/delete')\nprint(r.status_code)\n\n# Exemplo 2: DELETE com headers de autorizacao\nr = requests.delete(\n    'https://api.exemplo.com/usuarios/42',\n    headers={'Authorization': 'Bearer meu-token'},\n    impersonate='chrome'\n)\nprint(r.status_code)",
+      "cmdOutput": "$ python script.py\n\n200\n\n204"
+    },
+    {
+      "cmdName": "requests.head()",
+      "cmdDescription": "Realiza uma requisição HTTP HEAD, retornando apenas os cabeçalhos da resposta sem o corpo. Útil para verificar se um recurso existe ou obter metadados.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: HEAD simples\nr = requests.head('https://httpbin.org/get')\nprint(r.status_code)\nprint(r.headers)\n\n# Exemplo 2: HEAD para verificar Content-Type e tamanho\nr = requests.head('https://exemplo.com/arquivo.pdf')\nprint(r.headers.get('Content-Type'))\nprint(r.headers.get('Content-Length'))",
+      "cmdOutput": "$ python script.py\n\n200\n{'Content-Type': 'application/json', 'Server': 'gunicorn/19.9.0'}\n\napplication/pdf\n1048576"
+    },
+    {
+      "cmdName": "requests.options()",
+      "cmdDescription": "Realiza uma requisição HTTP OPTIONS para verificar quais métodos HTTP são permitidos em um endpoint (usado em CORS preflight).",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: OPTIONS para checar metodos permitidos\nr = requests.options('https://httpbin.org/get')\nprint(r.status_code)\nprint(r.headers.get('Allow'))\n\n# Exemplo 2: OPTIONS para CORS preflight\nr = requests.options(\n    'https://api.exemplo.com/dados',\n    headers={\n        'Origin': 'https://meusite.com',\n        'Access-Control-Request-Method': 'POST'\n    }\n)\nprint(r.headers.get('Access-Control-Allow-Methods'))",
+      "cmdOutput": "$ python script.py\n\n200\nGET, HEAD, OPTIONS\n\nGET, POST, PUT, DELETE, PATCH"
+    },
+    {
+      "cmdName": "requests.request()",
+      "cmdDescription": "Função genérica de requisição HTTP que aceita qualquer método (GET, POST, PUT, DELETE, OPTIONS, HEAD, TRACE, PATCH, QUERY). Base para todas as funções de conveniência.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: request() generico GET\nr = requests.request('GET', 'https://httpbin.org/get')\nprint(r.status_code)\n\n# Exemplo 2: request() com metodo TRACE\nr = requests.request('TRACE', 'https://httpbin.org/trace')\nprint(r.text)\n\n# Exemplo 3: request() com todos os parametros\nr = requests.request(\n    'POST',\n    'https://httpbin.org/post',\n    params={'debug': '1'},\n    json={'dados': 'valor'},\n    headers={'X-Custom': 'header'},\n    timeout=15,\n    impersonate='safari',\n    verify=True\n)\nprint(r.json())",
+      "cmdOutput": "$ python script.py\n\n200\n\nTRACE / HTTP/1.1...\n\n{'json': {'dados': 'valor'}, ...}"
+    },
+    {
+      "cmdName": "Session()",
+      "cmdDescription": "Cria uma sessão HTTP síncrona que reutiliza conexões e cookies automaticamente entre requisições. Thread-safe. Recomendado para múltiplas requisições ao mesmo servidor ou quando cookies persistentes são necessários.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Session como context manager (recomendado)\nwith requests.Session() as s:\n    r = s.get('https://httpbin.org/get')\n    print(r.status_code)\n\n# Exemplo 2: Session com headers globais\nwith requests.Session(headers={'User-Agent': 'MeuBot/1.0'}) as s:\n    r1 = s.get('https://httpbin.org/get')\n    r2 = s.get('https://httpbin.org/headers')\n    print(r1.status_code, r2.status_code)\n\n# Exemplo 3: Session para manter cookies automaticamente\ns = requests.Session()\ns.get('https://httpbin.org/cookies/set/usuario/joao')\nprint(s.cookies)\nr = s.get('https://httpbin.org/cookies')\nprint(r.json())\ns.close()\n\n# Exemplo 4: Session com impersonacao global\nwith requests.Session(impersonate='chrome') as s:\n    r = s.get('https://tls.browserleaks.com/json')\n    print(r.json())",
+      "cmdOutput": "$ python script.py\n\n200\n\n200 200\n\n<Cookies[<Cookie usuario=joao for httpbin.org />]>\n{'cookies': {'usuario': 'joao'}}\n\n{'ja3n_hash': 'aa56c057...', ...}"
+    },
+    {
+      "cmdName": "AsyncSession()",
+      "cmdDescription": "Cria uma sessão HTTP assíncrona baseada em asyncio. Permite concorrência eficiente com múltiplas requisições simultâneas. Parâmetro max_clients define o máximo de handles curl simultâneos (padrão: 10).",
+      "cmdCode": "import asyncio\nfrom curl_cffi import AsyncSession\n\n# Exemplo 1: AsyncSession basica\nasync def main():\n    async with AsyncSession() as s:\n        r = await s.get('https://httpbin.org/get')\n        print(r.status_code)\n\nasyncio.run(main())\n\n# Exemplo 2: Multiplas requisicoes concorrentes com gather\nasync def fetch_multiplas():\n    urls = [\n        'https://httpbin.org/get',\n        'https://httpbin.org/ip',\n        'https://httpbin.org/headers',\n    ]\n    async with AsyncSession(impersonate='chrome') as s:\n        tasks = [s.get(url) for url in urls]\n        resultados = await asyncio.gather(*tasks)\n        for r in resultados:\n            print(r.status_code, r.url)\n\nasyncio.run(fetch_multiplas())\n\n# Exemplo 3: AsyncSession com max_clients customizado\nasync def scraper():\n    async with AsyncSession(max_clients=5) as s:\n        r = await s.post(\n            'https://httpbin.org/post',\n            json={'dados': 'valor'}\n        )\n        print(r.json())\n\nasyncio.run(scraper())",
+      "cmdOutput": "$ python script.py\n\n200\n\n200 https://httpbin.org/get\n200 https://httpbin.org/ip\n200 https://httpbin.org/headers\n\n{'json': {'dados': 'valor'}, ...}"
+    },
+    {
+      "cmdName": "impersonate=",
+      "cmdDescription": "Parâmetro disponível em todas as funções e sessões para simular o fingerprint TLS/JA3/HTTP2 de navegadores reais. Aceita strings como 'chrome', 'safari', 'safari_ios', 'chrome124', etc. Permite bypassar proteções anti-bot baseadas em TLS fingerprinting. Versões disponíveis: chrome99 até chrome131+, safari, safari_ios, edge.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Chrome (versao mais recente automatica)\nr = requests.get('https://tls.browserleaks.com/json', impersonate='chrome')\nprint(r.json().get('ja3n_hash'))\n\n# Exemplo 2: Versao especifica do Chrome\nr = requests.get('https://tls.browserleaks.com/json', impersonate='chrome124')\nprint(r.json())\n\n# Exemplo 3: Safari desktop\nr = requests.get('https://tls.browserleaks.com/json', impersonate='safari')\nprint(r.status_code)\n\n# Exemplo 4: Safari iOS (mobile)\nr = requests.get('https://tls.browserleaks.com/json', impersonate='safari_ios')\nprint(r.json())\n\n# Exemplo 5: Impersonacao global em Session\nwith requests.Session(impersonate='chrome') as s:\n    r1 = s.get('https://httpbin.org/get')\n    r2 = s.get('https://tls.browserleaks.com/json')\n    print(r1.status_code, r2.status_code)\n\n# Exemplo 6: Sem headers padrao do browser\nr = requests.get(\n    'https://httpbin.org/headers',\n    impersonate='chrome',\n    default_headers=False,\n    headers={'User-Agent': 'custom-agent'}\n)\nprint(r.status_code)",
+      "cmdOutput": "$ python script.py\n\naa56c057ad164ec4fdcb7a5a283be9fc\n\n{'ja3n_hash': 'aa56c057...', 'http2_fingerprint': '...', ...}\n\n200\n\n{'ja3n_hash': '...safari...', ...}\n\n200 200\n\n200"
+    },
+    {
+      "cmdName": "proxies=",
+      "cmdDescription": "Parâmetro para roteamento de requisições via proxy HTTP, HTTPS ou SOCKS. Aceita dicionário com chaves 'http' e/ou 'https', ou string simples via proxy=. Suporta autenticação na URL do proxy.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Proxy HTTP via dicionario\nproxies = {'https': 'http://localhost:8080'}\nr = requests.get('https://httpbin.org/ip', proxies=proxies, impersonate='chrome')\nprint(r.json())\n\n# Exemplo 2: Proxy SOCKS5\nproxies = {'https': 'socks5://localhost:1080'}\nr = requests.get('https://httpbin.org/ip', proxies=proxies)\nprint(r.json())\n\n# Exemplo 3: Proxy com usuario e senha\nproxies = {'https': 'http://usuario:senha@proxy.exemplo.com:3128'}\nr = requests.get('https://httpbin.org/ip', proxies=proxies)\nprint(r.json())\n\n# Exemplo 4: proxy= (string simples)\nr = requests.get(\n    'https://httpbin.org/ip',\n    proxy='http://proxy.exemplo.com:3128',\n    impersonate='chrome'\n)\nprint(r.json())\n\n# Exemplo 5: proxy_auth separado\nr = requests.get(\n    'https://httpbin.org/ip',\n    proxy='http://proxy.exemplo.com:3128',\n    proxy_auth=('usuario', 'senha')\n)\nprint(r.json())",
+      "cmdOutput": "$ python script.py\n\n{'origin': '203.0.113.1'}\n\n{'origin': '198.51.100.2'}\n\n{'origin': '192.0.2.3'}\n\n{'origin': '10.0.0.1'}\n\n{'origin': '10.0.0.1'}"
+    },
+    {
+      "cmdName": "stream=True",
+      "cmdDescription": "Habilita streaming da resposta, permitindo iterar sobre o conteúdo em chunks sem carregar tudo na memória. Ideal para respostas grandes ou Server-Sent Events (SSE).",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Stream com iter_content()\nr = requests.get('https://httpbin.org/stream/5', stream=True)\nfor chunk in r.iter_content():\n    print('CHUNK:', chunk[:50])\n\n# Exemplo 2: Stream com iter_lines()\nr = requests.get('https://httpbin.org/stream/3', stream=True)\nfor linha in r.iter_lines():\n    print('LINHA:', linha)\n\n# Exemplo 3: Stream com chunk_size e close()\nwith requests.Session() as s:\n    r = s.get('https://httpbin.org/stream/10', stream=True)\n    try:\n        for chunk in r.iter_content(chunk_size=1024):\n            print(len(chunk), 'bytes recebidos')\n    finally:\n        r.close()\n\n# Exemplo 4: Async stream\nimport asyncio\nfrom curl_cffi import AsyncSession\n\nasync def stream_async():\n    async with AsyncSession() as s:\n        async with s.stream('GET', 'https://httpbin.org/stream/5') as r:\n            async for chunk in r.aiter_content():\n                print('CHUNK ASYNC:', chunk[:30])\n\nasyncio.run(stream_async())",
+      "cmdOutput": "$ python script.py\n\nCHUNK: b'{\"url\": \"https://httpbin.org/stream/5\"...'\nCHUNK: b'{\"url\": \"https://httpbin.org/stream/5\"...'\n...\n\nLINHA: b'{\"id\": 0, ...}'\nLINHA: b'{\"id\": 1, ...}'\nLINHA: b'{\"id\": 2, ...}'\n\n512 bytes recebidos\n...\n\nCHUNK ASYNC: b'{\"url\": \"https://...'"
+    },
+    {
+      "cmdName": "response.text",
+      "cmdDescription": "Atributo da Response que retorna o corpo da resposta decodificado como string. Usa o encoding detectado no Content-Type ou UTF-8 como fallback. Pode ser sobrescrito via response.encoding.",
+      "cmdCode": "from curl_cffi import requests\n\nr = requests.get('https://httpbin.org/get', impersonate='chrome')\n\n# Exemplo 1: Acessar body como texto\nprint(r.text)\n\n# Exemplo 2: Forcar encoding especifico\nr.encoding = 'latin-1'\nprint(r.text)\n\n# Exemplo 3: Verificar encodings detectados\nprint('encoding:', r.encoding)\nprint('charset:', r.charset)\nprint('charset_encoding:', r.charset_encoding)\nprint('default_encoding:', r.default_encoding)",
+      "cmdOutput": "$ python script.py\n\n{\n  'args': {},\n  'headers': {...},\n  'url': 'https://httpbin.org/get'\n}\n\n{...texto em latin-1...}\n\nencoding: utf-8\ncharset: utf-8\ncharset_encoding: utf-8\ndefault_encoding: utf-8"
+    },
+    {
+      "cmdName": "response.content",
+      "cmdDescription": "Atributo da Response que retorna o corpo da resposta como bytes brutos, sem qualquer decodificação. Ideal para downloads de arquivos binários.",
+      "cmdCode": "from curl_cffi import requests\n\nr = requests.get('https://httpbin.org/get')\n\n# Exemplo 1: Acessar body como bytes\nprint(type(r.content))\nprint(r.content[:50])\n\n# Exemplo 2: Salvar imagem/arquivo binario\nr = requests.get('https://httpbin.org/image/png')\nwith open('imagem.png', 'wb') as f:\n    f.write(r.content)\nprint('Imagem salva:', len(r.content), 'bytes')",
+      "cmdOutput": "$ python script.py\n\n<class 'bytes'>\nb'{\\n  \"args\": {},\\n  \"headers\": {...}'\n\nImagem salva: 8090 bytes"
+    },
+    {
+      "cmdName": "response.json()",
+      "cmdDescription": "Método da Response que parseia e retorna o corpo da resposta como objeto Python (dict ou list). Usa orjson se disponível para maior performance, caso contrário usa json padrão.",
+      "cmdCode": "from curl_cffi import requests\n\nr = requests.get('https://httpbin.org/json')\n\n# Exemplo 1: Parsear JSON da resposta\ndados = r.json()\nprint(type(dados))\nprint(dados)\n\n# Exemplo 2: Acessar campos especificos\nr = requests.get('https://httpbin.org/get')\ninfo = r.json()\nprint(info.get('url'))\nprint(info.get('headers', {}).get('User-Agent'))\n\n# Exemplo 3: Tratando JSON invalido\ntry:\n    r = requests.get('https://httpbin.org/html')\n    dados = r.json()\nexcept Exception as e:\n    print('Erro ao parsear JSON:', type(e).__name__)",
+      "cmdOutput": "$ python script.py\n\n<class 'dict'>\n{'slideshow': {'author': 'Yours Truly', ...}}\n\nhttps://httpbin.org/get\ncurl_cffi/0.x\n\nErro ao parsear JSON: JSONDecodeError"
+    },
+    {
+      "cmdName": "response.status_code",
+      "cmdDescription": "Atributo da Response com o código de status HTTP da resposta (200, 404, 500, etc.). O atributo response.ok retorna True se status_code está entre 200 e 399.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Status 200\nr = requests.get('https://httpbin.org/get')\nprint(r.status_code)\nprint(r.ok)\nprint(r.reason)\n\n# Exemplo 2: Status de erro\nr = requests.get('https://httpbin.org/status/404')\nprint(r.status_code)\nprint(r.reason)\nprint(r.ok)\n\n# Exemplo 3: Checagem condicional\nr = requests.get('https://httpbin.org/status/429')\nif r.status_code == 200:\n    print('Sucesso!')\nelif r.status_code == 429:\n    print('Rate limit atingido!')\nelif r.status_code >= 500:\n    print('Erro no servidor!')",
+      "cmdOutput": "$ python script.py\n\n200\nTrue\nOK\n\n404\nNOT FOUND\nFalse\n\nRate limit atingido!"
+    },
+    {
+      "cmdName": "response.raise_for_status()",
+      "cmdDescription": "Método da Response que lança HTTPError se o status code for de erro (4xx ou 5xx). Ideal para tratamento explícito de respostas de erro em pipelines de dados.",
+      "cmdCode": "from curl_cffi import requests\nfrom curl_cffi.requests.exceptions import HTTPError\n\n# Exemplo 1: Status 200 - nao lanca excecao\nr = requests.get('https://httpbin.org/get')\nr.raise_for_status()\nprint('OK:', r.status_code)\n\n# Exemplo 2: Status 404 - lanca HTTPError\ntry:\n    r = requests.get('https://httpbin.org/status/404')\n    r.raise_for_status()\nexcept HTTPError as e:\n    print('Erro HTTP:', e)\n\n# Exemplo 3: Status 500 - lanca HTTPError\ntry:\n    r = requests.get('https://httpbin.org/status/500')\n    r.raise_for_status()\nexcept HTTPError as e:\n    print('Erro servidor:', e)",
+      "cmdOutput": "$ python script.py\n\nOK: 200\n\nErro HTTP: 404 Client Error: NOT FOUND\n\nErro servidor: 500 Server Error: INTERNAL SERVER ERROR"
+    },
+    {
+      "cmdName": "response.headers",
+      "cmdDescription": "Atributo da Response com os cabeçalhos HTTP da resposta como objeto Headers (case-insensitive multi-dict). Suporta acesso por chave, iteração e múltiplos valores por chave.",
+      "cmdCode": "from curl_cffi import requests\n\nr = requests.get('https://httpbin.org/get')\n\n# Exemplo 1: Acessar header especifico (case-insensitive)\nprint(r.headers['Content-Type'])\nprint(r.headers.get('content-type'))\n\n# Exemplo 2: Iterar todos os headers\nfor nome, valor in r.headers.items():\n    print(f'{nome}: {valor}')\n\n# Exemplo 3: Verificar presenca de header\nif 'X-RateLimit-Remaining' in r.headers:\n    print('Rate limit restante:', r.headers['X-RateLimit-Remaining'])\n\n# Exemplo 4: multi_items() para headers repetidos\nprint(r.headers.multi_items())",
+      "cmdOutput": "$ python script.py\n\napplication/json\napplication/json\n\nContent-Type: application/json\nServer: gunicorn/19.9.0\nDate: Thu, 09 Apr 2026 12:00:00 GMT\n...\n\nRate limit restante: 99\n\n[('content-type', 'application/json'), ('server', 'gunicorn/19.9.0'), ...]"
+    },
+    {
+      "cmdName": "response.cookies",
+      "cmdDescription": "Atributo da Response com os cookies retornados pelo servidor nessa requisição. Para cookies acumulados em múltiplas requisições (com redirect), use session.cookies.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Cookies da resposta\nr = requests.get('https://httpbin.org/cookies/set/foo/bar')\nprint(r.cookies)\nprint(r.cookies.get('foo'))\n\n# Exemplo 2: Cookies em Session (acumulados entre requests)\nwith requests.Session() as s:\n    s.get('https://httpbin.org/cookies/set/user/joao')\n    s.get('https://httpbin.org/cookies/set/role/admin')\n    print(s.cookies)\n    r = s.get('https://httpbin.org/cookies')\n    print(r.json())\n\n# Exemplo 3: Enviar cookies manualmente\ncookies = {'session_id': 'abc123', 'token': 'xyz'}\nr = requests.get('https://httpbin.org/cookies', cookies=cookies)\nprint(r.json())",
+      "cmdOutput": "$ python script.py\n\n<Cookies[<Cookie foo=bar for httpbin.org />]>\nbar\n\n<Cookies[<Cookie user=joao ...>, <Cookie role=admin ...>]>\n{'cookies': {'user': 'joao', 'role': 'admin'}}\n\n{'cookies': {'session_id': 'abc123', 'token': 'xyz'}}"
+    },
+    {
+      "cmdName": "response.url",
+      "cmdDescription": "Atributo da Response com a URL final usada na requisição (após redirecionamentos). Outros atributos relacionados: redirect_count, redirect_url.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: URL da resposta\nr = requests.get('https://httpbin.org/get')\nprint(r.url)\n\n# Exemplo 2: URL apos redirecionamento\nr = requests.get('https://httpbin.org/redirect/2')\nprint('URL final:', r.url)\nprint('Qtd redirects:', r.redirect_count)\nprint('URL redirect:', r.redirect_url)\n\n# Exemplo 3: URL com params buildados\nparams = {'page': '1', 'limit': '20'}\nr = requests.get('https://httpbin.org/get', params=params)\nprint(r.url)",
+      "cmdOutput": "$ python script.py\n\nhttps://httpbin.org/get\n\nURL final: https://httpbin.org/get\nQtd redirects: 2\nURL redirect: https://httpbin.org/get\n\nhttps://httpbin.org/get?page=1&limit=20"
+    },
+    {
+      "cmdName": "response.elapsed",
+      "cmdDescription": "Atributo da Response com o tempo em segundos (float) que a requisição levou para ser concluída. Outros atributos de info: http_version, primary_ip, local_ip.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Medir tempo de resposta\nr = requests.get('https://httpbin.org/delay/1')\nprint(f'Tempo: {r.elapsed:.3f}s')\n\n# Exemplo 2: Comparar performance\nfor url in ['https://httpbin.org/get', 'https://httpbin.org/ip']:\n    r = requests.get(url)\n    print(f'{url}: {r.elapsed:.3f}s')\n\n# Exemplo 3: Informacoes extras da conexao\nr = requests.get('https://httpbin.org/get', impersonate='chrome')\nprint('HTTP version:', r.http_version)  # 1=HTTP/1, 2=HTTP/2, 3=HTTP/3\nprint('IP servidor:', r.primary_ip)\nprint('IP local:', r.local_ip)",
+      "cmdOutput": "$ python script.py\n\nTempo: 1.042s\n\nhttps://httpbin.org/get: 0.234s\nhttps://httpbin.org/ip: 0.198s\n\nHTTP version: 2\nIP servidor: 34.227.213.82\nIP local: 192.168.1.100"
+    },
+    {
+      "cmdName": "response.history",
+      "cmdDescription": "Atributo da Response com lista de dicts de headers dos redirecionamentos anteriores. Permite controlar redirects com allow_redirects= e max_redirects=.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Ver historico de redirects\nr = requests.get('https://httpbin.org/redirect/3')\nprint('Status final:', r.status_code)\nprint('Total redirects:', r.redirect_count)\nprint('Historico:', r.history)\n\n# Exemplo 2: Desabilitar seguir redirects\nr = requests.get(\n    'https://httpbin.org/redirect/1',\n    allow_redirects=False\n)\nprint('Status sem redirect:', r.status_code)\nprint('Location header:', r.headers.get('Location'))\n\n# Exemplo 3: Limitar numero maximo de redirects\nr = requests.get(\n    'https://httpbin.org/redirect/5',\n    max_redirects=2\n)\nprint('Redirects realizados:', r.redirect_count)",
+      "cmdOutput": "$ python script.py\n\nStatus final: 200\nTotal redirects: 3\nHistorico: [{'headers': {...}}, {'headers': {...}}, {'headers': {...}}]\n\nStatus sem redirect: 302\nLocation header: https://httpbin.org/get\n\nRedirects realizados: 2"
+    },
+    {
+      "cmdName": "response.iter_content()",
+      "cmdDescription": "Método da Response para iterar sobre o corpo em chunks de bytes. Disponível quando stream=True. Aceita chunk_size e decode_unicode.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Iteracao basica em chunks\nr = requests.get('https://httpbin.org/stream/5', stream=True)\nfor chunk in r.iter_content():\n    print('Chunk:', len(chunk), 'bytes')\n\n# Exemplo 2: Chunks de tamanho fixo\nr = requests.get('https://httpbin.org/stream/10', stream=True)\nfor chunk in r.iter_content(chunk_size=512):\n    print('chunk[512]:', chunk[:20])\n\n# Exemplo 3: Download de arquivo grande\nwith open('arquivo.bin', 'wb') as f:\n    r = requests.get('https://httpbin.org/bytes/10000', stream=True)\n    for chunk in r.iter_content(chunk_size=4096):\n        if chunk:\n            f.write(chunk)\nprint('Download completo!')",
+      "cmdOutput": "$ python script.py\n\nChunk: 102 bytes\nChunk: 102 bytes\n...\n\nchunk[512]: b'{\"url\": \"https://...'\n...\n\nDownload completo!"
+    },
+    {
+      "cmdName": "response.iter_lines()",
+      "cmdDescription": "Método da Response para iterar sobre as linhas do corpo. Útil para APIs de streaming que retornam uma linha JSON por vez (NDJSON/SSE).",
+      "cmdCode": "from curl_cffi import requests\nimport json\n\n# Exemplo 1: Iterar linhas de NDJSON stream\nr = requests.get('https://httpbin.org/stream/5', stream=True)\nfor linha in r.iter_lines():\n    if linha:\n        dados = json.loads(linha)\n        print('ID:', dados.get('id'))\n\n# Exemplo 2: Com decode_unicode=True\nr = requests.get('https://httpbin.org/stream/3', stream=True)\nfor linha in r.iter_lines(decode_unicode=True):\n    print('Linha:', linha[:50])\n\n# Exemplo 3: Async aiter_lines\nimport asyncio\nfrom curl_cffi import AsyncSession\n\nasync def ler_stream():\n    async with AsyncSession() as s:\n        async with s.stream('GET', 'https://httpbin.org/stream/3') as r:\n            async for linha in r.aiter_lines():\n                print('Async:', linha[:30])\n\nasyncio.run(ler_stream())",
+      "cmdOutput": "$ python script.py\n\nID: 0\nID: 1\nID: 2\nID: 3\nID: 4\n\nLinha: {\"url\": \"https://httpbin.org/stream/3\",...\n...\n\nAsync: {\"url\": \"https://httpbin..."
+    },
+    {
+      "cmdName": "response.close()",
+      "cmdDescription": "Método da Response para fechar a conexão de streaming. Deve ser chamado ao parar de consumir um stream antes de esgotá-lo, para liberar recursos e evitar memory leak.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Fechar stream apos consumo parcial\nr = requests.get('https://httpbin.org/stream/100', stream=True)\ntry:\n    for i, chunk in enumerate(r.iter_content()):\n        if i >= 3:\n            break  # parar antes do fim\n        print('Chunk', i, ':', len(chunk))\nfinally:\n    r.close()  # sempre fechar\n\n# Exemplo 2: Com session e close manual\nwith requests.Session() as s:\n    r = s.get('https://httpbin.org/stream/5', stream=True)\n    for chunk in r.iter_content():\n        print(len(chunk))\n    r.close()",
+      "cmdOutput": "$ python script.py\n\nChunk 0 : 98\nChunk 1 : 98\nChunk 2 : 98\n\n98\n98\n98\n98\n98"
+    },
+    {
+      "cmdName": "Cookies.set()",
+      "cmdDescription": "Método do objeto Cookies para definir um cookie por nome, com domínio, path e flag secure opcionais.",
+      "cmdCode": "from curl_cffi import requests\nfrom curl_cffi.requests import Cookies\n\n# Exemplo 1: Definir cookie simples\ncookies = Cookies()\ncookies.set('sessao', 'abc123')\n\n# Exemplo 2: Cookie com dominio, path e secure\ncookies = Cookies()\ncookies.set('token', 'xyz', domain='httpbin.org', path='/', secure=True)\n\n# Exemplo 3: Usar cookies direto na Session\nwith requests.Session() as s:\n    s.cookies.set('meu_cookie', 'valor123', domain='httpbin.org')\n    r = s.get('https://httpbin.org/cookies')\n    print(r.json())",
+      "cmdOutput": "$ python script.py\n\n{'cookies': {'meu_cookie': 'valor123'}}"
+    },
+    {
+      "cmdName": "Cookies.get()",
+      "cmdDescription": "Método do objeto Cookies para recuperar o valor de um cookie por nome. Aceita domain e path para filtro exato. Retorna default se o cookie não existir.",
+      "cmdCode": "from curl_cffi import requests\n\nwith requests.Session() as s:\n    s.get('https://httpbin.org/cookies/set/sessao/abc123')\n\n    # Exemplo 1: Obter cookie por nome\n    valor = s.cookies.get('sessao')\n    print('Cookie:', valor)\n\n    # Exemplo 2: Filtrar por domain\n    valor = s.cookies.get('sessao', domain='httpbin.org')\n    print('Com domain:', valor)\n\n    # Exemplo 3: Default se nao existir\n    valor = s.cookies.get('nao_existe', default='padrao')\n    print('Default:', valor)",
+      "cmdOutput": "$ python script.py\n\nCookie: abc123\nCom domain: abc123\nDefault: padrao"
+    },
+    {
+      "cmdName": "Cookies.delete()",
+      "cmdDescription": "Método do objeto Cookies para remover um cookie específico por nome. Opcionalmente filtra por domínio e path.",
+      "cmdCode": "from curl_cffi import requests\n\nwith requests.Session() as s:\n    s.get('https://httpbin.org/cookies/set/foo/bar')\n    s.get('https://httpbin.org/cookies/set/baz/qux')\n    print('Antes:', s.cookies)\n\n    # Deletar cookie especifico\n    s.cookies.delete('foo')\n    print('Apos delete foo:', s.cookies)\n\n    # Deletar com filtro de domain\n    s.cookies.delete('baz', domain='httpbin.org')\n    print('Apos delete baz:', s.cookies)",
+      "cmdOutput": "$ python script.py\n\nAntes: <Cookies[<Cookie foo=bar ...>, <Cookie baz=qux ...>]>\nApos delete foo: <Cookies[<Cookie baz=qux ...>]>\nApos delete baz: <Cookies[]>"
+    },
+    {
+      "cmdName": "Cookies.clear()",
+      "cmdDescription": "Método do objeto Cookies para limpar todos os cookies armazenados. Pode filtrar por domínio e/ou path para remover apenas um subconjunto.",
+      "cmdCode": "from curl_cffi import requests\n\nwith requests.Session() as s:\n    s.get('https://httpbin.org/cookies/set/a/1')\n    s.get('https://httpbin.org/cookies/set/b/2')\n    print('Antes:', s.cookies)\n\n    # Limpar todos\n    s.cookies.clear()\n    print('Apos clear():', s.cookies)\n\n# Limpar apenas de um dominio\nwith requests.Session() as s:\n    s.cookies.set('x', '1', domain='site1.com')\n    s.cookies.set('y', '2', domain='site2.com')\n    s.cookies.clear(domain='site1.com')\n    print('Apos clear(domain=site1):', s.cookies)",
+      "cmdOutput": "$ python script.py\n\nAntes: <Cookies[<Cookie a=1 ...>, <Cookie b=2 ...>]>\nApos clear(): <Cookies[]>\n\nApos clear(domain=site1): <Cookies[<Cookie y=2 for site2.com />]>"
+    },
+    {
+      "cmdName": "auth=",
+      "cmdDescription": "Parâmetro para autenticação HTTP básica (Basic Auth). Aceita uma tupla (username, password) que é automaticamente codificada em Base64 e adicionada ao header Authorization.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Basic Auth\nr = requests.get(\n    'https://httpbin.org/basic-auth/user/senha',\n    auth=('user', 'senha')\n)\nprint(r.status_code)\nprint(r.json())\n\n# Exemplo 2: Auth em Session (global para todas as requests)\nwith requests.Session(auth=('admin', 'admin123')) as s:\n    r = s.get('https://httpbin.org/basic-auth/admin/admin123')\n    print(r.json())\n\n# Exemplo 3: Auth falhou (credenciais erradas)\nr = requests.get(\n    'https://httpbin.org/basic-auth/user/senha',\n    auth=('user', 'senha_errada')\n)\nprint(r.status_code)  # 401 Unauthorized",
+      "cmdOutput": "$ python script.py\n\n200\n{'authenticated': True, 'user': 'user'}\n\n{'authenticated': True, 'user': 'admin'}\n\n401"
+    },
+    {
+      "cmdName": "verify=",
+      "cmdDescription": "Parâmetro booleano ou string para controlar a verificação SSL/TLS. verify=False desabilita verificação (útil para certificados auto-assinados). Aceita path para CA bundle customizado.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Verificacao SSL habilitada (padrao True)\nr = requests.get('https://httpbin.org/get', verify=True)\nprint(r.status_code)\n\n# Exemplo 2: Desabilitar verificacao SSL\nr = requests.get('https://self-signed.badssl.com/', verify=False)\nprint(r.status_code)\n\n# Exemplo 3: CA bundle customizado\nr = requests.get(\n    'https://meu-servidor-interno.com/api',\n    verify='/caminho/para/ca-bundle.crt'\n)\nprint(r.status_code)\n\n# Exemplo 4: Certificado cliente (mutual TLS)\nr = requests.get(\n    'https://cliente.exemplo.com/api',\n    cert=('/caminho/client.crt', '/caminho/client.key')\n)\nprint(r.status_code)",
+      "cmdOutput": "$ python script.py\n\n200\n\n200\n\n200\n\n200"
+    },
+    {
+      "cmdName": "timeout=",
+      "cmdDescription": "Parâmetro para definir o timeout das requisições em segundos. Aceita float simples (total) ou tupla (connect_timeout, read_timeout). Lança RequestsError se excedido.",
+      "cmdCode": "from curl_cffi import requests\nfrom curl_cffi.requests.exceptions import RequestsError\n\n# Exemplo 1: Timeout simples em segundos\nr = requests.get('https://httpbin.org/delay/1', timeout=5)\nprint(r.status_code)\n\n# Exemplo 2: Tuple (connect_timeout, read_timeout)\nr = requests.get(\n    'https://httpbin.org/delay/1',\n    timeout=(3.0, 10.0)\n)\nprint(r.status_code)\n\n# Exemplo 3: Timeout excedido lanca erro\ntry:\n    r = requests.get('https://httpbin.org/delay/5', timeout=2)\nexcept RequestsError as e:\n    print('Timeout!', e)\n\n# Exemplo 4: Sem timeout (None - cuidado!)\nr = requests.get('https://httpbin.org/get', timeout=None)\nprint(r.status_code)",
+      "cmdOutput": "$ python script.py\n\n200\n\n200\n\nTimeout! Operation timed out after 2000 milliseconds with 0 bytes received\n\n200"
+    },
+    {
+      "cmdName": "RetryStrategy()",
+      "cmdDescription": "Classe para configurar estratégia de retry automático em caso de falha. Suporta count (número de tentativas), delay (espera entre tentativas), jitter (variação aleatória) e backoff (exponential/linear).",
+      "cmdCode": "from curl_cffi import Session, RetryStrategy\n\n# Exemplo 1: Retry simples por contagem\nwith Session(retry=2) as s:\n    r = s.get('https://httpbin.org/get')\n    print(r.status_code)\n\n# Exemplo 2: Estrategia customizada com backoff exponencial\nstrategy = RetryStrategy(\n    count=3,\n    delay=0.5,\n    jitter=0.1,\n    backoff='exponential'\n)\nwith Session(retry=strategy) as s:\n    r = s.get('https://httpbin.org/get')\n    print(r.status_code)\n\n# Exemplo 3: Retry em AsyncSession\nimport asyncio\nfrom curl_cffi import AsyncSession\n\nasync def com_retry():\n    strategy = RetryStrategy(count=3, delay=1.0)\n    async with AsyncSession(retry=strategy) as s:\n        r = await s.get('https://httpbin.org/get')\n        print(r.status_code)\n\nasyncio.run(com_retry())",
+      "cmdOutput": "$ python script.py\n\n200\n\n200\n\n200"
+    },
+    {
+      "cmdName": "CurlMime()",
+      "cmdDescription": "Classe para construir formulários multipart (multipart/form-data). Permite upload de arquivos com nome do campo, tipo MIME, filename e dados em memória ou do disco.",
+      "cmdCode": "from curl_cffi import requests, CurlMime\n\n# Exemplo 1: Upload de arquivo do disco\nmp = CurlMime()\nmp.addpart(\n    name='arquivo',\n    content_type='image/png',\n    filename='foto.png',\n    local_path='./foto.png'\n)\nr = requests.post('https://httpbin.org/post', multipart=mp)\nprint(r.json())\nmp.close()\n\n# Exemplo 2: Upload de dados em memoria\nconteudo = b'conteudo do arquivo aqui'\nmp = CurlMime()\nmp.addpart(\n    name='documento',\n    content_type='application/pdf',\n    filename='relatorio.pdf',\n    data=conteudo\n)\nr = requests.post(\n    'https://httpbin.org/post',\n    data={'campo_extra': 'valor'},\n    multipart=mp\n)\nprint(r.status_code)\nmp.close()\n\n# Exemplo 3: Multiplas partes\nmp = CurlMime()\nmp.addpart(name='titulo', data=b'Meu documento')\nmp.addpart(name='versao', data=b'1.0')\nmp.addpart(\n    name='arquivo',\n    content_type='text/plain',\n    filename='notas.txt',\n    data=b'conteudo das notas'\n)\nr = requests.post('https://httpbin.org/post', multipart=mp)\nmp.close()\nprint(r.json().get('form'))",
+      "cmdOutput": "$ python script.py\n\n{'files': {'arquivo': '...'}, 'form': {}, ...}\n\n200\n\n{'titulo': 'Meu documento', 'versao': '1.0'}"
+    },
+    {
+      "cmdName": "CurlMime.addpart()",
+      "cmdDescription": "Método do CurlMime para adicionar uma parte ao formulário multipart. Apenas um de local_path ou data pode ser usado em cada addpart().",
+      "cmdCode": "from curl_cffi import requests, CurlMime\n\nmp = CurlMime()\n\n# Exemplo 1: Parte com arquivo local\nmp.addpart(\n    name='foto',\n    content_type='image/jpeg',\n    filename='avatar.jpg',\n    local_path='./avatar.jpg'\n)\n\n# Exemplo 2: Parte com dados em memoria (bytes)\nmp.addpart(\n    name='metadata',\n    content_type='application/json',\n    filename='meta.json',\n    data=b'{\"autor\": \"joao\", \"versao\": 1}'\n)\n\n# Exemplo 3: Campo de texto simples (sem filename)\nmp.addpart(\n    name='descricao',\n    data=b'Este e um campo de texto simples'\n)\n\nr = requests.post('https://httpbin.org/post', multipart=mp)\nprint(r.status_code)\nmp.close()",
+      "cmdOutput": "$ python script.py\n\n200"
+    },
+    {
+      "cmdName": "WebSocket()",
+      "cmdDescription": "Classe para conexão WebSocket síncrona com suporte a callbacks (on_message, on_error, on_open, on_close). Alternativa direta sem precisar de Session.",
+      "cmdCode": "from curl_cffi import WebSocket\n\n# Exemplo 1: WebSocket com callback on_message\ndef ao_receber(ws, mensagem):\n    print('Mensagem:', mensagem)\n\nws = WebSocket(on_message=ao_receber)\nws.run_forever('wss://api.gemini.com/v1/marketdata/BTCUSD')\n\n# Exemplo 2: Multiplos callbacks\ndef ao_abrir(ws):\n    print('Conexao aberta!')\n\ndef ao_fechar(ws, code, reason):\n    print(f'Fechada: {code}')\n\ndef ao_erro(ws, erro):\n    print('Erro:', erro)\n\nws = WebSocket(\n    on_open=ao_abrir,\n    on_message=ao_receber,\n    on_close=ao_fechar,\n    on_error=ao_erro\n)\nws.run_forever('wss://echo.websocket.org')\n\n# Exemplo 3: Via Session (recomendado)\nfrom curl_cffi import Session\n\ndef on_msg(ws, msg):\n    print(msg)\n\nwith Session() as session:\n    ws = session.ws_connect(\n        'wss://api.gemini.com/v1/marketdata/BTCUSD',\n        on_message=on_msg\n    )\n    ws.run_forever()",
+      "cmdOutput": "$ python script.py\n\nConexao aberta!\nMensagem: b'{\"type\":\"update\",\"product_id\":\"BTCUSD\",...}'\nMensagem: b'{\"type\":\"trade\",...}'\n..."
+    },
+    {
+      "cmdName": "WebSocket.run_forever()",
+      "cmdDescription": "Método do WebSocket síncrono para iniciar e manter a conexão ativa indefinidamente. Libcurl processa pings/pongs automaticamente. Bloqueante até a conexão ser fechada.",
+      "cmdCode": "from curl_cffi import Session, WebSocket\n\ncont = {'msgs': 0}\n\ndef on_msg(ws, msg):\n    cont['msgs'] += 1\n    print('MSG:', msg[:50])\n    if cont['msgs'] >= 3:\n        ws.close()  # fechar apos 3 mensagens\n\n# Exemplo 1: run_forever com close automatico\nwith Session() as session:\n    ws = session.ws_connect(\n        'wss://api.gemini.com/v1/marketdata/BTCUSD',\n        on_message=on_msg\n    )\n    ws.run_forever()\nprint('Total msgs:', cont['msgs'])\n\n# Exemplo 2: run_forever com impersonacao\nwith Session(impersonate='chrome') as session:\n    ws = session.ws_connect(\n        'wss://ws.exemplo.com/stream',\n        on_message=lambda ws, msg: print(msg)\n    )\n    ws.run_forever()",
+      "cmdOutput": "$ python script.py\n\nMSG: b'{\"type\":\"update\",\"product_id\":\"BTCUSD\"...'\nMSG: b'{\"type\":\"trade\",\"product_id\":\"BTCUSD\"...'\nMSG: b'{\"type\":\"update\",\"product_id\":\"BTCUSD\"...'\nTotal msgs: 3"
+    },
+    {
+      "cmdName": "WebSocket.send()",
+      "cmdDescription": "Método do WebSocket síncrono para enviar uma mensagem de texto ou bytes ao servidor WebSocket.",
+      "cmdCode": "from curl_cffi import Session\nimport json\n\n# Exemplo 1: Enviar texto\ndef on_msg(ws, msg):\n    print('Echo recebido:', msg)\n    ws.close()\n\nwith Session() as session:\n    ws = session.ws_connect(\n        'wss://echo.websocket.org',\n        on_message=on_msg,\n        on_open=lambda ws: ws.send('Hello World!')\n    )\n    ws.run_forever()\n\n# Exemplo 2: Enviar JSON serializado\ndef ao_abrir(ws):\n    payload = json.dumps({'action': 'subscribe', 'channel': 'tickers'})\n    ws.send(payload)\n\nwith Session() as session:\n    ws = session.ws_connect(\n        'wss://api.exemplo.com/ws',\n        on_open=ao_abrir,\n        on_message=lambda ws, msg: print(msg)\n    )\n    ws.run_forever()",
+      "cmdOutput": "$ python script.py\n\nEcho recebido: b'Hello World!'\n\nb'{\"event\":\"subscribed\",\"channel\":\"tickers\"}'"
+    },
+    {
+      "cmdName": "WebSocket.close()",
+      "cmdDescription": "Método do WebSocket para fechar a conexão com um código de fechamento e mensagem opcional.",
+      "cmdCode": "from curl_cffi import Session\n\nmsg_count = {'n': 0}\n\ndef on_msg(ws, msg):\n    msg_count['n'] += 1\n    print('MSG:', msg[:50])\n    if msg_count['n'] >= 2:\n        # Fechar com codigo padrao OK\n        ws.close()\n\nwith Session() as session:\n    ws = session.ws_connect(\n        'wss://api.gemini.com/v1/marketdata/BTCUSD',\n        on_message=on_msg\n    )\n    ws.run_forever()\n\nprint('Conexao encerrada apos', msg_count['n'], 'mensagens')",
+      "cmdOutput": "$ python script.py\n\nMSG: b'{\"type\":\"update\",\"product_id\":\"BTCUSD\"...'\nMSG: b'{\"type\":\"trade\",\"product_id\":\"BTCUSD\"...'\nConexao encerrada apos 2 mensagens"
+    },
+    {
+      "cmdName": "AsyncWebSocket()",
+      "cmdDescription": "Classe WebSocket assíncrona retornada por AsyncSession.ws_connect(). Suporta async for para iteração, send_str() e send_bytes() para envio, e close() para encerrar a conexão.",
+      "cmdCode": "import asyncio\nfrom curl_cffi import AsyncSession\n\n# Exemplo 1: AsyncWebSocket com async for\nasync def ws_async():\n    async with AsyncSession() as session:\n        async with session.ws_connect('wss://echo.websocket.org') as ws:\n            await ws.send_str('Hello!')\n            async for msg in ws:\n                print('Resposta:', msg)\n                break  # sair apos 1 mensagem\n\nasyncio.run(ws_async())\n\n# Exemplo 2: Enviar multiplas mensagens simultaneamente\nasync def ws_multi():\n    async with AsyncSession() as session:\n        async with session.ws_connect('wss://echo.websocket.org') as ws:\n            await asyncio.gather(\n                *[ws.send_str(f'Msg {i}') for i in range(5)]\n            )\n            count = 0\n            async for msg in ws:\n                print(msg)\n                count += 1\n                if count >= 5:\n                    break\n\nasyncio.run(ws_multi())\n\n# Exemplo 3: Enviar bytes\nasync def ws_bytes():\n    async with AsyncSession() as session:\n        async with session.ws_connect('wss://ws.exemplo.com') as ws:\n            await ws.send_bytes(b'\\x00\\x01\\x02\\x03')\n            async for msg in ws:\n                print('Bytes recebidos:', msg)\n                break\n\nasyncio.run(ws_bytes())",
+      "cmdOutput": "$ python script.py\n\nResposta: b'Hello!'\n\nb'Msg 0'\nb'Msg 1'\nb'Msg 2'\nb'Msg 3'\nb'Msg 4'\n\nBytes recebidos: b'\\x00\\x01\\x02\\x03'"
+    },
+    {
+      "cmdName": "session.ws_connect()",
+      "cmdDescription": "Método de Session e AsyncSession para estabelecer uma conexão WebSocket. Retorna WebSocket (sync) ou AsyncWebSocket (async). Aceita todos os parâmetros comuns como headers, cookies, proxies, timeout, impersonate.",
+      "cmdCode": "import asyncio\nfrom curl_cffi import Session, AsyncSession\n\n# Exemplo 1: ws_connect sincrono\nwith Session() as s:\n    ws = s.ws_connect(\n        'wss://api.gemini.com/v1/marketdata/BTCUSD',\n        on_message=lambda ws, msg: print(msg[:40])\n    )\n    ws.run_forever()\n\n# Exemplo 2: ws_connect async (context manager)\nasync def ws_async():\n    async with AsyncSession() as s:\n        async with s.ws_connect('wss://echo.websocket.org') as ws:\n            await ws.send_str('Ola!')\n            async for msg in ws:\n                print('Eco:', msg)\n                break\n\nasyncio.run(ws_async())\n\n# Exemplo 3: ws_connect com parametros extras\nasync def ws_params():\n    async with AsyncSession(impersonate='chrome') as s:\n        async with s.ws_connect(\n            'wss://ws.exemplo.com/stream',\n            headers={'Authorization': 'Bearer token'},\n            params={'v': '2'},\n            timeout=30\n        ) as ws:\n            async for msg in ws:\n                print(msg)\n                break\n\nasyncio.run(ws_params())",
+      "cmdOutput": "$ python script.py\n\nb'{\"type\":\"update\",\"product_id\":\"BTC...'\n\nEco: b'Ola!'\n\nb'{\"evento\": \"dados\", ...}'"
+    },
+    {
+      "cmdName": "Curl()",
+      "cmdDescription": "Classe de baixo nível que encapsula um handle libcurl (curl_easy_*). Oferece controle completo via setopt/getinfo. Ideal quando a API requests de alto nível não é suficiente.",
+      "cmdCode": "from curl_cffi import Curl, CurlOpt\nfrom io import BytesIO\n\n# Exemplo 1: Requisicao basica com Curl\nbuffer = BytesIO()\nc = Curl()\nc.setopt(CurlOpt.URL, b'https://httpbin.org/get')\nc.setopt(CurlOpt.WRITEDATA, buffer)\nc.perform()\nc.close()\nprint(buffer.getvalue().decode())\n\n# Exemplo 2: Curl com impersonacao de navegador\nbuffer = BytesIO()\nc = Curl()\nc.setopt(CurlOpt.URL, b'https://tls.browserleaks.com/json')\nc.setopt(CurlOpt.WRITEDATA, buffer)\nc.impersonate('chrome124')\nc.perform()\nc.close()\nprint(buffer.getvalue().decode())\n\n# Exemplo 3: Curl com header customizado\nbuffer = BytesIO()\nc = Curl()\nc.setopt(CurlOpt.URL, b'https://httpbin.org/headers')\nc.setopt(CurlOpt.WRITEDATA, buffer)\nc.setopt(CurlOpt.HTTPHEADER, [b'X-Custom: valor', b'Accept: application/json'])\nc.perform()\nc.close()\nprint(buffer.getvalue().decode())",
+      "cmdOutput": "$ python script.py\n\n{\n  'args': {},\n  'headers': {...},\n  'url': 'https://httpbin.org/get'\n}\n\n{'ja3n_hash': 'aa56c057...', 'http2_fingerprint': '...'}\n\n{\n  'headers': {\n    'Accept': 'application/json',\n    'X-Custom': 'valor'\n  }\n}"
+    },
+    {
+      "cmdName": "Curl.setopt()",
+      "cmdDescription": "Método de baixo nível para configurar opções do libcurl via enum CurlOpt. Equivalente ao curl_easy_setopt(). Usado para configurar URL, callbacks, headers, proxies, timeouts, SSL e muito mais.",
+      "cmdCode": "from curl_cffi import Curl, CurlOpt\nfrom io import BytesIO\n\nbuffer = BytesIO()\nc = Curl()\n\n# Opcoes basicas de requisicao\nc.setopt(CurlOpt.URL, b'https://httpbin.org/get')\nc.setopt(CurlOpt.WRITEDATA, buffer)\nc.setopt(CurlOpt.FOLLOWLOCATION, 1)   # seguir redirects\nc.setopt(CurlOpt.MAXREDIRS, 5)        # limite de redirects\nc.setopt(CurlOpt.TIMEOUT, 30)         # timeout total\nc.setopt(CurlOpt.CONNECTTIMEOUT, 10)  # timeout de conexao\n\n# Proxy\nc.setopt(CurlOpt.PROXY, b'http://proxy.exemplo.com:3128')\nc.setopt(CurlOpt.PROXYUSERPWD, b'usuario:senha')\n\n# SSL\nc.setopt(CurlOpt.SSL_VERIFYPEER, 0)\nc.setopt(CurlOpt.SSL_VERIFYHOST, 0)\n\n# HTTP version\nc.setopt(CurlOpt.HTTP_VERSION, 2)  # forcar HTTP/2\n\nc.perform()\nc.close()\nprint(buffer.getvalue()[:80])",
+      "cmdOutput": "$ python script.py\n\nb'{\\n  \"args\": {},\\n  \"headers\": {\\n    \"Accept\": \"*/*\",\\n    \"Host\": \"httpbin.org\"...'"
+    },
+    {
+      "cmdName": "Curl.getinfo()",
+      "cmdDescription": "Método de baixo nível para obter informações sobre a requisição após curl.perform(). Equivalente ao curl_easy_getinfo(). Usa CurlInfo como enum de opções.",
+      "cmdCode": "from curl_cffi import Curl, CurlOpt, CurlInfo\nfrom io import BytesIO\n\nbuffer = BytesIO()\nc = Curl()\nc.setopt(CurlOpt.URL, b'https://httpbin.org/get')\nc.setopt(CurlOpt.WRITEDATA, buffer)\nc.perform()\n\n# Informacoes disponiveis apos perform()\nstatus = c.getinfo(CurlInfo.RESPONSE_CODE)\ntempo = c.getinfo(CurlInfo.TOTAL_TIME)\nip = c.getinfo(CurlInfo.PRIMARY_IP)\nurl_final = c.getinfo(CurlInfo.EFFECTIVE_URL)\ntamanho = c.getinfo(CurlInfo.SIZE_DOWNLOAD)\n\nprint('Status:', status)\nprint('Tempo total:', tempo)\nprint('IP do servidor:', ip)\nprint('URL efetiva:', url_final)\nprint('Bytes baixados:', tamanho)\n\nc.close()",
+      "cmdOutput": "$ python script.py\n\nStatus: 200\nTempo total: 0.342\nIP do servidor: 34.227.213.82\nURL efetiva: https://httpbin.org/get\nBytes baixados: 382.0"
+    },
+    {
+      "cmdName": "Curl.impersonate()",
+      "cmdDescription": "Método de baixo nível para aplicar impersonação de navegador diretamente em um handle Curl. Configura TLS/JA3/HTTP2 fingerprints do browser alvo.",
+      "cmdCode": "from curl_cffi import Curl, CurlOpt\nfrom io import BytesIO\n\n# Exemplo 1: Impersonar Chrome com headers padrao\nbuffer = BytesIO()\nc = Curl()\nc.setopt(CurlOpt.URL, b'https://tls.browserleaks.com/json')\nc.setopt(CurlOpt.WRITEDATA, buffer)\nc.impersonate('chrome124')  # versao especifica\nc.perform()\nprint(buffer.getvalue().decode())\nc.close()\n\n# Exemplo 2: Impersonar sem headers padrao\nbuffer2 = BytesIO()\nc2 = Curl()\nc2.setopt(CurlOpt.URL, b'https://tls.browserleaks.com/json')\nc2.setopt(CurlOpt.WRITEDATA, buffer2)\nc2.impersonate('safari', default_headers=False)\nc2.perform()\nprint(buffer2.getvalue().decode())\nc2.close()",
+      "cmdOutput": "$ python script.py\n\n{\"ja3n_hash\": \"aa56c057ad164ec4fdcb7a5a283be9fc\", \"http2_fingerprint\": \"...chrome...\"}\n\n{\"ja3n_hash\": \"...safari...\", \"http2_fingerprint\": \"...\"}"
+    },
+    {
+      "cmdName": "Curl.perform()",
+      "cmdDescription": "Método de baixo nível para executar a requisição curl com todas as opções configuradas via setopt. Equivalente ao curl_easy_perform(). Lança CurlError em caso de falha.",
+      "cmdCode": "from curl_cffi import Curl, CurlOpt\nfrom curl_cffi.curl import CurlError\nfrom io import BytesIO\n\n# Exemplo 1: perform() com sucesso\nbuffer = BytesIO()\nc = Curl()\nc.setopt(CurlOpt.URL, b'https://httpbin.org/get')\nc.setopt(CurlOpt.WRITEDATA, buffer)\nc.perform()\nc.close()\nprint('Sucesso:', buffer.getvalue()[:40])\n\n# Exemplo 2: Capturando CurlError em caso de falha\nbuffer2 = BytesIO()\nc2 = Curl()\nc2.setopt(CurlOpt.URL, b'https://host-invalido-xyz.nao-existe')\nc2.setopt(CurlOpt.WRITEDATA, buffer2)\ntry:\n    c2.perform()\nexcept CurlError as e:\n    print('CurlError:', e)\nfinally:\n    c2.close()",
+      "cmdOutput": "$ python script.py\n\nSucesso: b'{\\n  \"args\": {},\\n  \"headers\": {\\n  \"Acce...'\n\nCurlError: Could not resolve host: host-invalido-xyz.nao-existe"
+    },
+    {
+      "cmdName": "Curl.reset()",
+      "cmdDescription": "Método para resetar todas as opções de um handle Curl para os valores padrão. Equivalente ao curl_easy_reset(). Permite reutilizar o handle para uma nova requisição.",
+      "cmdCode": "from curl_cffi import Curl, CurlOpt\nfrom io import BytesIO\n\nc = Curl()\n\n# Primeira requisicao\nbuf1 = BytesIO()\nc.setopt(CurlOpt.URL, b'https://httpbin.org/get')\nc.setopt(CurlOpt.WRITEDATA, buf1)\nc.perform()\nprint('Primeira:', buf1.getvalue()[:30])\n\n# Resetar handle para nova requisicao\nc.reset()\n\n# Segunda requisicao com novas opcoes\nbuf2 = BytesIO()\nc.setopt(CurlOpt.URL, b'https://httpbin.org/ip')\nc.setopt(CurlOpt.WRITEDATA, buf2)\nc.perform()\nprint('Segunda:', buf2.getvalue()[:30])\n\nc.close()",
+      "cmdOutput": "$ python script.py\n\nPrimeira: b'{\\n  \"args\": {},\\n  \"headers\"...'\nSegunda: b'{\\n  \"origin\": \"34.227.213.82\"...'"
+    },
+    {
+      "cmdName": "Curl.close()",
+      "cmdDescription": "Método para fechar e liberar os recursos de um handle Curl. Deve sempre ser chamado após o uso para evitar memory leak. Use try/finally para garantir o fechamento.",
+      "cmdCode": "from curl_cffi import Curl, CurlOpt\nfrom io import BytesIO\n\n# Exemplo 1: Fechar manualmente apos uso\nbuffer = BytesIO()\nc = Curl()\nc.setopt(CurlOpt.URL, b'https://httpbin.org/get')\nc.setopt(CurlOpt.WRITEDATA, buffer)\nc.perform()\nc.close()  # liberar recursos\nprint('Curl encerrado com sucesso.')\n\n# Exemplo 2: Garantir close com try/finally\nbuffer2 = BytesIO()\nc2 = Curl()\ntry:\n    c2.setopt(CurlOpt.URL, b'https://httpbin.org/ip')\n    c2.setopt(CurlOpt.WRITEDATA, buffer2)\n    c2.perform()\n    print(buffer2.getvalue())\nfinally:\n    c2.close()  # sempre executado",
+      "cmdOutput": "$ python script.py\n\nCurl encerrado com sucesso.\n\nb'{\\n  \"origin\": \"34.227.213.82\"\\n}\\n'"
+    },
+    {
+      "cmdName": "Curl.version()",
+      "cmdDescription": "Método estático que retorna a string de versão completa da libcurl utilizada internamente pelo curl_cffi, incluindo protocolos e features compiladas.",
+      "cmdCode": "from curl_cffi import Curl\n\n# Exemplo 1: Versao do libcurl\nversao = Curl.version()\nprint('libcurl version:', versao)\n\n# Exemplo 2: Versao do curl_cffi Python\nimport curl_cffi\nprint('curl_cffi Python version:', curl_cffi.__version__)",
+      "cmdOutput": "$ python script.py\n\nlibcurl version: libcurl/8.7.1 BoringSSL zlib/1.3 brotli/1.1.0 ...\ncurl_cffi Python version: 0.7.x"
+    },
+    {
+      "cmdName": "Curl.duphandle()",
+      "cmdDescription": "Método para duplicar um handle Curl existente. Equivalente ao curl_easy_duphandle(). Headers e buffers Python precisam ser reconfigurados no clone.",
+      "cmdCode": "from curl_cffi import Curl, CurlOpt\nfrom io import BytesIO\n\n# Configurar handle base com opcoes comuns\nc_base = Curl()\nc_base.setopt(CurlOpt.FOLLOWLOCATION, 1)\nc_base.setopt(CurlOpt.TIMEOUT, 30)\nc_base.impersonate('chrome')\n\n# Duplicar o handle (herda configs C-level)\nc_clone = c_base.duphandle()\n\n# Configurar URL e buffer no clone (nao herdados)\nbuf = BytesIO()\nc_clone.setopt(CurlOpt.URL, b'https://httpbin.org/get')\nc_clone.setopt(CurlOpt.WRITEDATA, buf)\nc_clone.perform()\nc_clone.close()\n\nc_base.close()\nprint(buf.getvalue()[:50])",
+      "cmdOutput": "$ python script.py\n\nb'{\\n  \"args\": {},\\n  \"headers\": {\\n    \"Accept\": \"*...'"
+    },
+    {
+      "cmdName": "curl_options=",
+      "cmdDescription": "Parâmetro nas funções de alto nível (requests/Session) para passar opções CurlOpt diretamente sem usar a API Curl. Aplicado após todas as configurações internas, evitando sobrescrita.",
+      "cmdCode": "from curl_cffi import requests, CurlOpt\n\n# Exemplo 1: Definir HTTP2 pseudo-header order\nr = requests.get(\n    'https://tls.browserleaks.com/json',\n    impersonate='chrome',\n    curl_options={CurlOpt.HTTP2_PSEUDO_HEADERS_ORDER: 'masp'}\n)\nprint(r.json())\n\n# Exemplo 2: Multiplas opcoes curl em Session\nfrom curl_cffi import Session\nwith Session(impersonate='chrome') as s:\n    r = s.get(\n        'https://httpbin.org/get',\n        curl_options={\n            CurlOpt.MAXREDIRS: 3,\n            CurlOpt.CONNECTTIMEOUT: 5\n        }\n    )\n    print(r.status_code)\n\n# Exemplo 3: HTTP2 settings frame customizado\nr = requests.get(\n    'https://tls.browserleaks.com/json',\n    impersonate='chrome',\n    curl_options={\n        CurlOpt.HTTP2_SETTINGS: '1:65536;3:1000;4:6291456;6:262144'\n    }\n)\nprint(r.json().get('http2_fingerprint'))",
+      "cmdOutput": "$ python script.py\n\n{'ja3n_hash': '...', 'http2_fingerprint': '...masp...'}\n\n200\n\n1:65536;3:1000;4:6291456;6:262144|..."
+    },
+    {
+      "cmdName": "ja3=",
+      "cmdDescription": "Parâmetro para especificar uma string JA3 customizada para fingerprinting TLS personalizado. Permite impersonar qualquer cliente TLS sem usar perfis de browser pré-definidos.",
+      "cmdCode": "from curl_cffi import requests\n\n# String JA3 customizada\nja3_str = '771,4865-4866-4867-49195-49199-52393-52392-49196-49200-49162-49161-49171-49172-51-57-47-53,0-23-65281-10-11-35-16-5-13-18-51-45-43-27-17513-21,29-23-24,0'\n\n# Exemplo 1: JA3 em requisicao\nr = requests.get(\n    'https://tls.browserleaks.com/json',\n    ja3=ja3_str\n)\nprint(r.json())\n\n# Exemplo 2: JA3 em Session\nwith requests.Session(ja3=ja3_str) as s:\n    r = s.get('https://tls.browserleaks.com/json')\n    print(r.json().get('ja3n_hash'))",
+      "cmdOutput": "$ python script.py\n\n{'ja3n_hash': 'hash-personalizado-do-ja3', 'ja3_text': '771,...', ...}\n\nhash-personalizado-do-ja3"
+    },
+    {
+      "cmdName": "akamai=",
+      "cmdDescription": "Parâmetro para especificar uma string Akamai customizada para fingerprinting HTTP/2. Controla SETTINGS frame, WINDOW_UPDATE e ordem dos pseudo-headers HTTP/2.",
+      "cmdCode": "from curl_cffi import requests\n\n# String Akamai customizada (formato: settings|window_update|priorities|pseudo_headers)\nakamai_str = '1:65536;3:1000;4:6291456;6:262144|15663105|0|m,a,s,p'\n\n# Exemplo 1: Akamai em requisicao\nr = requests.get(\n    'https://tls.browserleaks.com/json',\n    akamai=akamai_str,\n    impersonate='chrome'\n)\nprint(r.json())\n\n# Exemplo 2: Akamai em Session\nwith requests.Session(akamai=akamai_str, impersonate='chrome') as s:\n    r = s.get('https://tls.browserleaks.com/json')\n    print(r.json().get('http2_fingerprint'))",
+      "cmdOutput": "$ python script.py\n\n{'http2_fingerprint': '1:65536;3:1000;...', ...}\n\n1:65536;3:1000;4:6291456;6:262144|15663105|0|m,a,s,p"
+    },
+    {
+      "cmdName": "http_version=",
+      "cmdDescription": "Parâmetro para forçar uma versão específica do protocolo HTTP. Usa o enum CurlHttpVersion. Suporta HTTP/1.1, HTTP/2 (padrão) e HTTP/3 (requer build especial).",
+      "cmdCode": "from curl_cffi import requests\nfrom curl_cffi.requests import CurlHttpVersion\n\n# Exemplo 1: Forcar HTTP/2 (padrao recomendado)\nr = requests.get(\n    'https://httpbin.org/get',\n    impersonate='chrome',\n    http_version=CurlHttpVersion.v2\n)\nprint('HTTP version:', r.http_version)  # 2\n\n# Exemplo 2: HTTP/3 (requer curl build com http3)\nr = requests.get(\n    'https://fp.impersonate.pro/api/http3',\n    http_version=CurlHttpVersion.v3,\n    impersonate='chrome'\n)\nprint('HTTP version:', r.http_version)  # 3\n\n# Exemplo 3: HTTP/1.1 forcado\nr = requests.get(\n    'https://httpbin.org/get',\n    http_version=CurlHttpVersion.v1_1\n)\nprint('HTTP version:', r.http_version)  # 1",
+      "cmdOutput": "$ python script.py\n\nHTTP version: 2\n\nHTTP version: 3\n\nHTTP version: 1"
+    },
+    {
+      "cmdName": "interface=",
+      "cmdDescription": "Parâmetro para especificar a interface de rede local (nome ou IP) para a conexão. Útil em servidores com múltiplas interfaces ou IPs.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Usar interface pelo nome\nr = requests.get(\n    'https://httpbin.org/ip',\n    interface='eth0'\n)\nprint(r.json())\n\n# Exemplo 2: Usar IP local especifico\nr = requests.get(\n    'https://httpbin.org/ip',\n    interface='192.168.1.100'\n)\nprint(r.json())\n\n# Exemplo 3: Interface em Session\nwith requests.Session(interface='eth1') as s:\n    r = s.get('https://httpbin.org/ip')\n    print(r.json())",
+      "cmdOutput": "$ python script.py\n\n{'origin': '203.0.113.10'}\n\n{'origin': '203.0.113.10'}\n\n{'origin': '203.0.113.11'}"
+    },
+    {
+      "cmdName": "accept_encoding=",
+      "cmdDescription": "Parâmetro para definir o header Accept-Encoding. Por padrão: 'gzip, deflate, br'. Respostas comprimidas são descomprimidas automaticamente. Use None para desabilitar.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Encoding padrao (gzip, deflate, br)\nr = requests.get('https://httpbin.org/get')\nprint(r.status_code)\n\n# Exemplo 2: Apenas gzip\nr = requests.get('https://httpbin.org/get', accept_encoding='gzip')\nprint(r.status_code)\n\n# Exemplo 3: Desabilitar compressao\nr = requests.get('https://httpbin.org/get', accept_encoding=None)\nprint(r.status_code)\n\n# Exemplo 4: Incluir brotli e zstd\nr = requests.get(\n    'https://httpbin.org/get',\n    accept_encoding='gzip, deflate, br, zstd'\n)\nprint(r.status_code)",
+      "cmdOutput": "$ python script.py\n\n200\n\n200\n\n200\n\n200"
+    },
+    {
+      "cmdName": "default_headers=",
+      "cmdDescription": "Parâmetro booleano que controla se os headers padrão do navegador impersonado são adicionados automaticamente. default_headers=False remove todos os headers automáticos do impersonate.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Com headers padrao do browser (default True)\nr = requests.get(\n    'https://httpbin.org/headers',\n    impersonate='chrome'\n)\nprint(r.json())  # inclui Accept, Accept-Language, etc. do Chrome\n\n# Exemplo 2: Sem headers padrao\nr = requests.get(\n    'https://httpbin.org/headers',\n    impersonate='chrome',\n    default_headers=False,\n    headers={'User-Agent': 'MeuBot/1.0'}\n)\nprint(r.json())  # apenas User-Agent customizado\n\n# Exemplo 3: Sobrescrever User-Agent mantendo outros\nr = requests.get(\n    'https://httpbin.org/headers',\n    impersonate='chrome',\n    headers={'User-Agent': 'Mozilla/5.0 Custom'}\n)\nprint(r.json().get('headers', {}).get('User-Agent'))",
+      "cmdOutput": "$ python script.py\n\n{'headers': {'Accept': 'text/html,...', 'Accept-Language': 'en-US,...', 'User-Agent': 'Mozilla/5.0 Chrome...', ...}}\n\n{'headers': {'User-Agent': 'MeuBot/1.0'}}\n\nMozilla/5.0 Custom"
+    },
+    {
+      "cmdName": "discard_cookies=",
+      "cmdDescription": "Parâmetro para descartar os cookies retornados em uma requisição específica, sem armazená-los na Session. Útil para ignorar cookies de rotas específicas.",
+      "cmdCode": "from curl_cffi import requests\n\nwith requests.Session() as s:\n    # Requisicao com cookies DESCARTADOS (nao salvos na session)\n    s.get(\n        'https://httpbin.org/cookies/set/temporario/1',\n        discard_cookies=True\n    )\n    print('Session cookies (deve estar vazia):', s.cookies)\n\n    # Requisicao normal (cookies SALVOS na session)\n    s.get('https://httpbin.org/cookies/set/persistente/1')\n    print('Session cookies (deve ter persistente):', s.cookies)",
+      "cmdOutput": "$ python script.py\n\nSession cookies (deve estar vazia): <Cookies[]>\nSession cookies (deve ter persistente): <Cookies[<Cookie persistente=1 for httpbin.org />]>"
+    },
+    {
+      "cmdName": "referer=",
+      "cmdDescription": "Parâmetro para definir o header Referer da requisição, simulando que o visitante chegou de uma URL específica. Útil para bypassar verificações de Referer em sites.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Definir referer\nr = requests.get(\n    'https://httpbin.org/headers',\n    referer='https://google.com/search?q=python'\n)\nprint(r.json().get('headers', {}).get('Referer'))\n\n# Exemplo 2: Referer em Session (global)\nwith requests.Session(referer='https://meusite.com') as s:\n    r = s.get('https://httpbin.org/headers')\n    print(r.json().get('headers', {}).get('Referer'))\n\n# Exemplo 3: Referer com impersonacao\nr = requests.get(\n    'https://httpbin.org/headers',\n    impersonate='chrome',\n    referer='https://www.google.com/'\n)\nprint(r.json().get('headers', {}).get('Referer'))",
+      "cmdOutput": "$ python script.py\n\nhttps://google.com/search?q=python\n\nhttps://meusite.com\n\nhttps://www.google.com/"
+    },
+    {
+      "cmdName": "session.close()",
+      "cmdDescription": "Método para fechar explicitamente a Session e liberar todos os recursos. Equivalente ao sair do bloco with. O context manager chama close() automaticamente.",
+      "cmdCode": "from curl_cffi import requests\n\n# Exemplo 1: Fechar session manualmente\ns = requests.Session()\nr = s.get('https://httpbin.org/get')\nprint(r.status_code)\ns.close()  # libera todos os handles e conexoes\n\n# Exemplo 2: Context manager fecha automaticamente (recomendado)\nwith requests.Session() as s:\n    r = s.get('https://httpbin.org/get')\n    print(r.status_code)\n# s.close() chamado automaticamente ao sair do with\n\n# Exemplo 3: AsyncSession close\nimport asyncio\nfrom curl_cffi import AsyncSession\n\nasync def main():\n    s = AsyncSession()\n    r = await s.get('https://httpbin.org/get')\n    print(r.status_code)\n    await s.close()  # fechar async session\n\nasyncio.run(main())",
+      "cmdOutput": "$ python script.py\n\n200\n\n200\n\n200"
+    },
+    {
+      "cmdName": "AsyncSession.stream()",
+      "cmdDescription": "Método do AsyncSession para streaming assíncrono de respostas. Equivalente a request(..., stream=True) como context manager async. Retorna AsyncGenerator.",
+      "cmdCode": "import asyncio\nfrom curl_cffi import AsyncSession\n\nasync def main():\n    async with AsyncSession() as s:\n        # Exemplo 1: Stream async com aiter_content()\n        async with s.stream('GET', 'https://httpbin.org/stream/5') as r:\n            async for chunk in r.aiter_content():\n                print('Chunk:', chunk[:30])\n\n        # Exemplo 2: Stream async com aiter_lines()\n        async with s.stream('GET', 'https://httpbin.org/stream/3') as r:\n            async for linha in r.aiter_lines():\n                print('Linha:', linha[:40])\n\nasyncio.run(main())",
+      "cmdOutput": "$ python script.py\n\nChunk: b'{\"url\": \"https://httpbin.org/stre...'\nChunk: b'{\"url\": \"https://httpbin.org/stre...'\n...\n\nLinha: b'{\"id\": 0, \"url\": \"https://httpbin...'\nLinha: b'{\"id\": 1, \"url\": \"https://httpbin...'\nLinha: b'{\"id\": 2, \"url\": \"https://httpbin...'"
+    },
+    {
+      "cmdName": "CurlOpt",
+      "cmdDescription": "Enum com todas as opções disponíveis para Curl.setopt() e curl_options=. Inclui opções padrão libcurl e opções especiais HTTP/2 para fingerprinting (HTTP2_PSEUDO_HEADERS_ORDER, HTTP2_SETTINGS, HTTP2_WINDOW_UPDATE).",
+      "cmdCode": "from curl_cffi import Curl, CurlOpt\nfrom io import BytesIO\n\n# Opcoes mais utilizadas\nbuf = BytesIO()\nc = Curl()\nc.setopt(CurlOpt.URL, b'https://httpbin.org/get')  # URL\nc.setopt(CurlOpt.WRITEDATA, buf)                    # buffer de saida\nc.setopt(CurlOpt.FOLLOWLOCATION, 1)                 # seguir redirects\nc.setopt(CurlOpt.MAXREDIRS, 5)                      # max redirects\nc.setopt(CurlOpt.TIMEOUT, 30)                       # timeout total\nc.setopt(CurlOpt.CONNECTTIMEOUT, 10)                # timeout de conexao\nc.setopt(CurlOpt.SSL_VERIFYPEER, 0)                 # desabilitar SSL verify\nc.setopt(CurlOpt.HTTP_VERSION, 2)                   # forcar HTTP/2\nc.perform()\nc.close()\nprint('OK:', buf.getvalue()[:20])\n\n# Opcoes especiais HTTP/2 fingerprinting via requests API\nfrom curl_cffi import requests\nr = requests.get(\n    'https://tls.browserleaks.com/json',\n    impersonate='chrome',\n    curl_options={\n        CurlOpt.HTTP2_PSEUDO_HEADERS_ORDER: 'masp',\n        CurlOpt.HTTP2_SETTINGS: '1:65536;3:1000;4:6291456;6:262144',\n        CurlOpt.HTTP2_WINDOW_UPDATE: '15663105'\n    }\n)\nprint(r.json().get('http2_fingerprint'))",
+      "cmdOutput": "$ python script.py\n\nOK: b'{\\n  \"args\": {},\\n...'\n\n1:65536;3:1000;4:6291456;6:262144|15663105|0|masp"
+    },
+    {
+      "cmdName": "CurlInfo",
+      "cmdDescription": "Enum com todas as informações disponíveis para Curl.getinfo() após perform(). Inclui RESPONSE_CODE, TOTAL_TIME, PRIMARY_IP, EFFECTIVE_URL, SIZE_DOWNLOAD, SPEED_DOWNLOAD, HTTP_VERSION, entre outros.",
+      "cmdCode": "from curl_cffi import Curl, CurlOpt, CurlInfo\nfrom io import BytesIO\n\nbuf = BytesIO()\nc = Curl()\nc.setopt(CurlOpt.URL, b'https://httpbin.org/get')\nc.setopt(CurlOpt.WRITEDATA, buf)\nc.perform()\n\n# Consultar informacoes da requisicao\nprint('Status:', c.getinfo(CurlInfo.RESPONSE_CODE))\nprint('Tempo total:', c.getinfo(CurlInfo.TOTAL_TIME))\nprint('Tempo connect:', c.getinfo(CurlInfo.CONNECT_TIME))\nprint('Tempo DNS:', c.getinfo(CurlInfo.NAMELOOKUP_TIME))\nprint('IP servidor:', c.getinfo(CurlInfo.PRIMARY_IP))\nprint('URL final:', c.getinfo(CurlInfo.EFFECTIVE_URL))\nprint('Bytes baixados:', c.getinfo(CurlInfo.SIZE_DOWNLOAD))\nprint('Velocidade:', c.getinfo(CurlInfo.SPEED_DOWNLOAD))\nprint('HTTP version:', c.getinfo(CurlInfo.HTTP_VERSION))\n\nc.close()",
+      "cmdOutput": "$ python script.py\n\nStatus: 200\nTempo total: 0.3421\nTempo connect: 0.1523\nTempo DNS: 0.0124\nIP servidor: 34.227.213.82\nURL final: https://httpbin.org/get\nBytes baixados: 382.0\nVelocidade: 1117.3\nHTTP version: 2"
+    },
+    {
+      "cmdName": "CurlHttpVersion",
+      "cmdDescription": "Enum com versões do protocolo HTTP para uso no parâmetro http_version=. Valores: v1, v1_1, v2, v2_prior_knowledge (sem upgrade), v3, v3only.",
+      "cmdCode": "from curl_cffi.requests import CurlHttpVersion\nfrom curl_cffi import requests\n\n# Listar versoes disponíveis\nprint('v1:', CurlHttpVersion.v1)\nprint('v1_1:', CurlHttpVersion.v1_1)\nprint('v2:', CurlHttpVersion.v2)\nprint('v2_prior_knowledge:', CurlHttpVersion.v2_prior_knowledge)\nprint('v3:', CurlHttpVersion.v3)\n\n# Usar HTTP/2 (padrao recomendado)\nr = requests.get(\n    'https://httpbin.org/get',\n    http_version=CurlHttpVersion.v2\n)\nprint('\\nHTTP version usado:', r.http_version)\n\n# Forcando HTTP/2 sem fallback para HTTP/1\nr = requests.get(\n    'https://httpbin.org/get',\n    http_version=CurlHttpVersion.v2_prior_knowledge\n)\nprint('HTTP version (prior knowledge):', r.http_version)",
+      "cmdOutput": "$ python script.py\n\nv1: 1\nv1_1: 2\nv2: 4\nv2_prior_knowledge: 5\nv3: 30\n\nHTTP version usado: 2\nHTTP version (prior knowledge): 2"
+    },
+    {
+      "cmdName": "Erro: CurlError",
+      "cmdDescription": "Exceção de baixo nível lançada pela API Curl quando o libcurl retorna um erro (como host inválido, timeout, falha SSL). Contém código de erro e mensagem do libcurl.",
+      "cmdCode": "from curl_cffi import Curl, CurlOpt\nfrom curl_cffi.curl import CurlError\nfrom io import BytesIO\n\n# Exemplo 1: Host nao resolvido\nbuf = BytesIO()\nc = Curl()\ntry:\n    c.setopt(CurlOpt.URL, b'https://host-invalido.nao-existe.xyz')\n    c.setopt(CurlOpt.WRITEDATA, buf)\n    c.perform()\nexcept CurlError as e:\n    print('CurlError code:', e.code)\n    print('CurlError msg:', str(e))\nfinally:\n    c.close()\n\n# Exemplo 2: Timeout\nbuf2 = BytesIO()\nc2 = Curl()\ntry:\n    c2.setopt(CurlOpt.URL, b'https://httpbin.org/delay/10')\n    c2.setopt(CurlOpt.WRITEDATA, buf2)\n    c2.setopt(CurlOpt.TIMEOUT, 2)\n    c2.perform()\nexcept CurlError as e:\n    print('Timeout CurlError:', e)\nfinally:\n    c2.close()",
+      "cmdOutput": "$ python script.py\n\nCurlError code: 6\nCurlError msg: Could not resolve host: host-invalido.nao-existe.xyz\n\nTimeout CurlError: Operation timed out after 2000 milliseconds with 0 bytes received"
+    },
+    {
+      "cmdName": "Erro: RequestsError",
+      "cmdDescription": "Exceção de alto nível da camada requests do curl_cffi. Envolve erros de conexão, timeout e outros erros de transporte. Importável de curl_cffi.requests.exceptions.",
+      "cmdCode": "from curl_cffi import requests\nfrom curl_cffi.requests.exceptions import RequestsError\n\n# Exemplo 1: Host invalido\ntry:\n    r = requests.get('https://host-invalido-xyz.nao-existe')\nexcept RequestsError as e:\n    print('RequestsError:', e)\n\n# Exemplo 2: Timeout de conexao\ntry:\n    r = requests.get('https://httpbin.org/delay/5', timeout=1)\nexcept RequestsError as e:\n    print('Timeout:', e)\n\n# Exemplo 3: Uso normal sem erro\ntry:\n    r = requests.get('https://httpbin.org/status/200')\n    r.raise_for_status()\n    print('OK')\nexcept RequestsError as e:\n    print('Erro de conexao:', e)",
+      "cmdOutput": "$ python script.py\n\nRequestsError: Could not resolve host: host-invalido-xyz.nao-existe\n\nTimeout: Operation timed out after 1000 milliseconds with 0 bytes received\n\nOK"
+    },
+    {
+      "cmdName": "Erro: HTTPError",
+      "cmdDescription": "Exceção lançada por response.raise_for_status() quando o servidor retorna status de erro HTTP (4xx ou 5xx). Importável de curl_cffi.requests.exceptions.",
+      "cmdCode": "from curl_cffi import requests\nfrom curl_cffi.requests.exceptions import HTTPError\n\n# Exemplo 1: 404 Not Found\ntry:\n    r = requests.get('https://httpbin.org/status/404')\n    r.raise_for_status()\nexcept HTTPError as e:\n    print('404 HTTPError:', e)\n\n# Exemplo 2: 403 Forbidden\ntry:\n    r = requests.get('https://httpbin.org/status/403')\n    r.raise_for_status()\nexcept HTTPError as e:\n    print('403 Forbidden:', e)\n\n# Exemplo 3: 500 Internal Server Error\ntry:\n    r = requests.get('https://httpbin.org/status/500')\n    r.raise_for_status()\nexcept HTTPError as e:\n    print('500 Server Error:', e)\n\n# Exemplo 4: Capturar hierarquia completa de excecoes\nfrom curl_cffi.requests.exceptions import RequestsError\ntry:\n    r = requests.get('https://httpbin.org/status/502')\n    r.raise_for_status()\nexcept HTTPError as e:\n    print('HTTP Error especifico:', e)\nexcept RequestsError as e:\n    print('Erro de requests:', e)",
+      "cmdOutput": "$ python script.py\n\n404 HTTPError: 404 Client Error: NOT FOUND\n\n403 Forbidden: 403 Client Error: FORBIDDEN\n\n500 Server Error: 500 Server Error: INTERNAL SERVER ERROR\n\nHTTP Error especifico: 502 Server Error: BAD GATEWAY"
+    }
+  ]
+}
 ]
