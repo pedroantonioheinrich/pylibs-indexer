@@ -96,7 +96,6 @@ function setupFilters(data){
             })
             
             tagIndexed.appendChild(newTag)
-           
         }
     })
 }
